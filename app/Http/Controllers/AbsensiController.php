@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Absensi;
 use Illuminate\Http\Request;
+use Ramsey\Collection\AbstractSet;
 
 class AbsensiController extends Controller
 {
@@ -28,7 +29,15 @@ class AbsensiController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $nisn=$request->nisn;
+        $status=$request->status;
+        $koordinat=$request->koordinat;
+        $absensi=Absensi::create([
+            'nisn'=>$nisn,
+            'status'=>$status,
+            'koordinat'=>$koordinat
+        ]);
+        return $absensi;
     }
 
     /**

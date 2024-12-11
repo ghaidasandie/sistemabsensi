@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AbsensiController;
 use App\Http\Controllers\SekolahController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -17,3 +18,4 @@ Route::post('sekolah',[SekolahController::class,'store']);
 Route::get('sekolahbyId',[SekolahController::class,'sekolahbyId']);
 Route::put('update',[SekolahController::class,'update']);
 Route::delete('delete',[SekolahController::class,'destroy']);
+Route::post('absensi',[AbsensiController::class,'store']);

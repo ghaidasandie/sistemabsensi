@@ -13,8 +13,9 @@ return new class extends Migration
     {
         Schema::create('absensis', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('siswa')->constrained()->cascadeOnDelete();
-            $table->enum('status',['h','s','i','a']);
+            $table->integer('nisn'); // Kolom nisn sebagai foreign key
+            $table->foreign('nisn')->references('nisn')->on('siswas')->cascadeOnDelete();
+            $table->enum('status', ['h', 's', 'i', 'a']);
             $table->text('koordinat');
             $table->timestamps();
         });

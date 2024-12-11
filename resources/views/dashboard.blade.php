@@ -67,7 +67,8 @@
         <div class="menu">
             <h3 class="text-center">Menu</h3>
             <a href="/dashboard">Dashboard</a>
-            <a href="/admin" class="active">Tabel Siswa</a>
+            <a href="/admin" class="active">Data Siswa</a>
+            <a href="/absensi" class="active">Data Absensi</a>
         </div>
         <form action="/logout" method="POST">
             @csrf

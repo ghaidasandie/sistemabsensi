@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Absensi;
 use App\Models\Siswa;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Http\Request;
@@ -70,3 +71,9 @@ Route::get('/', function (Request $request) {
         return view('home', ['siswas' => $siswas, 'qrcode' => $qrcode]);
     }
 });
+
+Route::get('/absensi', function () {
+    $absensis = Absensi::all();
+    return view('absensi', ['absensis' => $absensis]);
+})->middleware('auth');
+

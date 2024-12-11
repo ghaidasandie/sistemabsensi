@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -63,8 +64,7 @@
         }
 
         /* Style untuk tabel */
-        .table td,
-        .table th {
+        .table td, .table th {
             vertical-align: middle;
             text-align: center;
         }
@@ -80,13 +80,13 @@
         .table .action-btns i {
             font-size: 1.2rem;
             cursor: pointer;
-            margin-right: 10px;
-            /* Menambahkan jarak antara ikon */
+            margin-right: 10px; /* Menambahkan jarak antara ikon */
         }
 
         .table .action-btns i:hover {
             color: #007bff;
         }
+
     </style>
 </head>
 
@@ -108,14 +108,7 @@
     <!-- Konten Utama -->
     <div class="content">
         <div class="container mt-3">
-            <h1 class="text-center mb-4">Daftar Siswa</h1>
-
-            <!-- Tombol Tambah Data -->
-            <div class="d-flex justify-content-between mb-3">
-                <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#tambahSiswaModal">
-                    + Tambah Data Siswa
-                </button>
-            </div>
+            <h1 class="text-center mb-4">Daftar Absensi</h1>
 
             <!-- Tabel -->
             <div class="table-responsive">
@@ -124,40 +117,36 @@
                         <tr>
                             <th>NO</th>
                             <th>NISN</th>
-                            <th>Nama</th>
-                            <th>Jenis Kelamin</th>
-                            <th>Alamat</th>
+                            <th>Status</th>
                             <th>Koordinat</th>
                             <th>Tanggal Ditambahkan</th>
                             <th>Tanggal Diubah</th>
-                            <th>Aksi</th>
+                            <th>Aksi</th>                        
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ($siswas as $siswa)
-                            <tr>
-                                <td>{{ $loop->iteration }}</td>
-                                <td>{{ $siswa->nisn }}</td>
-                                <td>{{ $siswa->nama }}</td>
-                                <td>{{ $siswa->jenis_kelamin == 'l' ? 'Laki-laki' : 'Perempuan' }}</td>
-                                <td>{{ $siswa->alamat }}</td>
-                                <td>{{ $siswa->koordinat }}</td>
-                                <td>{{ $siswa->created_at->format('d M Y') }}</td>
-                                <td>{{ $siswa->updated_at->format('d M Y') }}</td>
-                                <td class="text-center">
-                                    <div class="d-flex justify-content-center">
-                                        <!-- Edit Button -->
-                                        <button class="btn btn-sm btn-primary me-2">
-                                            <i class="bi bi-pencil-square"></i>
-                                        </button>
-                                        <!-- Delete Button -->
-                                        <button class="btn btn-sm btn-danger">
-                                            <i class="bi bi-trash"></i>
-                                        </button>
-                                    </div>
-                                </td>
-
-                            </tr>
+                        @foreach ($absensis as $absensi)
+                        <tr>
+                            <td>{{ $loop->iteration }}</td>
+                            <td>{{ $absensi->nisn }}</td>
+                            <td>{{ $absensi->status }}</td>
+                            <td>{{ $absensi->koordinat }}</td>
+                            <td>{{ $absensi->created_at->format('d M Y') }}</td>
+                            <td>{{ $absensi->updated_at->format('d M Y') }}</td>
+                            <td class="text-center">
+                                <div class="d-flex justify-content-center">
+                                    <!-- Edit Button -->
+                                    <button class="btn btn-sm btn-primary me-2">
+                                        <i class="bi bi-pencil-square"></i>
+                                    </button>
+                                    <!-- Delete Button -->
+                                    <button class="btn btn-sm btn-danger">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </div>
+                            </td>
+                            
+                        </tr>
                         @endforeach
                     </tbody>
                 </table>
@@ -166,8 +155,7 @@
     </div>
 
     <!-- Modal Tambah Data -->
-    <div class="modal fade" id="tambahSiswaModal" tabindex="-1" aria-labelledby="tambahSiswaModalLabel"
-        aria-hidden="true">
+    <div class="modal fade" id="tambahSiswaModal" tabindex="-1" aria-labelledby="tambahSiswaModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <form action="/siswa" method="POST">

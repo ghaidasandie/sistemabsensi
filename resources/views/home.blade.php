@@ -65,11 +65,11 @@
                 <form action="" method="GET" class="d-flex">
                     <input type="text" name="search" class="form-control me-2"
                         placeholder="Cari NISN atau Nama Siswa..." value="{{ request('search') }}">
-                    <button type="submit" class="btn btn-primary">Cari</button>
+                    <button type="submit" class="btn btn-primary me-2">Cari</button>
+                    <a href="{{ url()->current() }}" class="btn btn-secondary">Reset</a>
                 </form>
             </div>
         </div>
-
 
         <!-- Card Container -->
         <div class="card-container">
