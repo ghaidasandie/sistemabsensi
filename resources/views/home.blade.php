@@ -49,55 +49,39 @@
         }
 
         .qr-code svg {
-            width: 100px;
-            height: 100px;
+            width: 300px;
+            height: 300px;
         }
     </style>
 </head>
 
 <body>
     <div class="container mt-5">
-        <h1 class="text-center mb-4">Daftar Siswa</h1>
+        <h1 class="text-center mb-5">QR-CODE SISWA</h1>
 
-        <!-- Form Pencarian -->
-        <div class="row mb-4">
-            <div class="col-md-8 col-lg-6 mx-auto">
-                <form action="" method="GET" class="d-flex">
-                    <input type="text" name="search" class="form-control me-2"
-                        placeholder="Cari NISN atau Nama Siswa..." value="{{ request('search') }}">
-                    <button type="submit" class="btn btn-primary me-2">Cari</button>
-                    <a href="{{ url()->current() }}" class="btn btn-secondary">Reset</a>
-                </form>
-            </div>
+        <!-- QR Code -->
+        <div class="qr-code">
+            {!! QrCode::size(300)->generate($token) !!}
+            <h1 class="mt-5" id="countdown"></h1>
         </div>
+       
 
-        <!-- Card Container -->
-        <div class="card-container">
-            @foreach ($siswas as $siswa)
-                <div class="student-card">
-                    <!-- Header -->
-                    <div class="card-header">
-                        {{ $siswa->nama }}
-                    </div>
-
-                    <!-- Body -->
-                    <div class="card-body">
-                        <p><strong>NISN:</strong> {{ $siswa->nisn }}</p>
-                        <p><strong>Jenis Kelamin:</strong>
-                            {{ $siswa->jenis_kelamin == 'l' ? 'Laki-laki' : 'Perempuan' }}</p>
-
-                        <!-- QR Code -->
-                        <div class="qr-code">
-                            {!! QrCode::size(100)->generate($siswa->nisn) !!}
-                        </div>
-                    </div>
-                </div>
-            @endforeach
-        </div>
-    </div>
-
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        <!-- Bootstrap JS -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        <script>
+            const countElement=document.getElementById('countdown');
+            let duration=15
+            const countdown=setInterval(() => {
+                countElement.innerHTML=duration;
+                duration--
+                if (duration < 0) {
+                    countElement.innerHTML='Token Expired';
+                    clearInterval(countdown)
+                    window.location.reload()
+                    
+                }
+            }, 1000);
+        </script>
 </body>
 
 </html>

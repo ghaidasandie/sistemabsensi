@@ -59,21 +59,14 @@ Route::get('/dashboard', function () {
     return view('dashboard', ['siswas' => $siswas]);
 })->middleware('auth');
 
+
 Route::get('/', function (Request $request) {
-    $search = $request->search;
-    if ($search) {
-        $qrcode = QrCode::generate('Hai');
-        $siswas = Siswa::where('nisn','=',$search)->get();
-        return view('home', ['siswas' => $siswas, 'qrcode' => $qrcode]);
-    } else {
-        $qrcode = QrCode::generate('Hai');
-        $siswas = [];
-        return view('home', ['siswas' => $siswas, 'qrcode' => $qrcode]);
-    }
-});
+    //Generate sanctum token
+    $token = auth()->user()->createToken('absensi')->plainTextToken;
+    return view('home',['token'=>$token]);
+})->middleware('auth');
 
 Route::get('/absensi', function () {
     $absensis = Absensi::all();
     return view('absensi', ['absensis' => $absensis]);
 })->middleware('auth');
-
