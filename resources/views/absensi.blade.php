@@ -1,11 +1,10 @@
-
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tabel Siswa dengan Sidebar</title>
+    <title>Data Absebsi</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -41,6 +40,10 @@
 
         .sidebar a:hover {
             background-color: #495057;
+
+        }
+        .sidebar a.active {
+            background-color: #007bff;
         }
 
         .logout-btn {
@@ -48,10 +51,11 @@
             background-color: #dc3545;
             border: none;
             color: white;
-            padding: 10px;
+            padding: 12px;
             border-radius: 5px;
             text-align: center;
             cursor: pointer;
+            font-size: 16px;
         }
 
         .logout-btn:hover {
@@ -80,7 +84,7 @@
         .table .action-btns i {
             font-size: 1.2rem;
             cursor: pointer;
-            margin-right: 10px; /* Menambahkan jarak antara ikon */
+            margin-right: 10px;
         }
 
         .table .action-btns i:hover {
@@ -96,7 +100,7 @@
         <div class="menu">
             <h3 class="text-center">Menu</h3>
             <a href="/dashboard">Dashboard</a>
-            <a href="/admin" class="active">Data Siswa</a>
+            <a href="/admin">Data Siswa</a>
             <a href="/absensi" class="active">Data Absensi</a>
         </div>
         <form action="/logout" method="POST">
@@ -121,7 +125,7 @@
                             <th>Koordinat</th>
                             <th>Tanggal Ditambahkan</th>
                             <th>Tanggal Diubah</th>
-                            <th>Aksi</th>                        
+                            <th>Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -145,7 +149,7 @@
                                     </button>
                                 </div>
                             </td>
-                            
+
                         </tr>
                         @endforeach
                     </tbody>
@@ -199,4 +203,7 @@
     </div>
 
     <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

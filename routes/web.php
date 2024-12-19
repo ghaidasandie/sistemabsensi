@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\SiswaController;
 use App\Models\Absensi;
 use App\Models\Siswa;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
@@ -70,3 +71,9 @@ Route::get('/absensi', function () {
     $absensis = Absensi::all();
     return view('absensi', ['absensis' => $absensis]);
 })->middleware('auth');
+
+Route::resource('siswa', SiswaController::class);
+Route::put('/siswa/{id}', [SiswaController::class, 'update'])->name('siswa.update');
+Route::put('/siswa/{id}', [SiswaController::class, 'update'])->middleware('auth')->name('siswa.update');
+
+

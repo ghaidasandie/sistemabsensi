@@ -4,10 +4,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tabel Siswa dengan Sidebar</title>
+    <title>Dashboard</title>
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
+        /* Sidebar Styles */
         .sidebar {
             height: 100vh;
             position: fixed;
@@ -29,14 +30,18 @@
         .sidebar a {
             color: white;
             text-decoration: none;
-            display: block;
             padding: 10px;
             margin-bottom: 10px;
             border-radius: 5px;
+            display: block;
         }
 
         .sidebar a:hover {
             background-color: #495057;
+        }
+
+        .sidebar a.active {
+            background-color: #007bff;
         }
 
         .logout-btn {
@@ -44,10 +49,11 @@
             background-color: #dc3545;
             border: none;
             color: white;
-            padding: 10px;
+            padding: 12px;
             border-radius: 5px;
             text-align: center;
             cursor: pointer;
+            font-size: 16px;
         }
 
         .logout-btn:hover {
@@ -64,11 +70,11 @@
 <body>
     <!-- Sidebar -->
     <div class="sidebar">
+        <h3 class="text-center">Menu</h3>
         <div class="menu">
-            <h3 class="text-center">Menu</h3>
-            <a href="/dashboard">Dashboard</a>
-            <a href="/admin" class="active">Data Siswa</a>
-            <a href="/absensi" class="active">Data Absensi</a>
+            <a href="/dashboard" class="active">Dashboard</a>
+            <a href="/admin">Data Siswa</a>
+            <a href="/absensi">Data Absensi</a>
         </div>
         <form action="/logout" method="POST">
             @csrf
@@ -76,9 +82,11 @@
         </form>
     </div>
 
-
-
-   
+    <!-- Content -->
+    <div class="content">
+        <!-- Your content goes here -->
+        <h1>Welcome to Data Siswa</h1>
+    </div>
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
