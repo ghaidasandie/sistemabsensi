@@ -21,6 +21,7 @@ class SiswaFactory extends Factory
         return [
             'nisn' => fake()->numerify('########'),
             'nama' => fake()->name(),
+            'tanggal_lahir' => fake()->date(),
             'jenis_kelamin' => fake()->randomElement(['l', 'p']),
             'alamat' => fake()->address(),
             'koordinat' => fake()->latitude() . ', ' . fake()->longitude(), // Koordinat geografis acak

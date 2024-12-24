@@ -29,6 +29,7 @@ class DatabaseSeeder extends Seeder
         Siswa::create([
             'nisn' => '24012020',
             'nama' => 'Muhammad Rizqi Suhada',
+            'tanggal_lahir' => '1999-08-15',
             'jenis_kelamin' => 'l',
             'alamat' => 'Jl.Bubat Babet',
             'koordinat' => '-6.940370163971576, 107.62500684232282'

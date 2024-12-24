@@ -129,6 +129,7 @@
                             <th>NO</th>
                             <th>NISN</th>
                             <th>Nama</th>
+                            <th>Tanggal Lahir</th>
                             <th>Jenis Kelamin</th>
                             <th>Alamat</th>
                             <th>Koordinat</th>
@@ -143,6 +144,7 @@
                                 <td>{{ $loop->iteration }}</td>
                                 <td>{{ $siswa->nisn }}</td>
                                 <td>{{ $siswa->nama }}</td>
+                                <td>{{ $siswa->tanggal_lahir }}</td>
                                 <td>{{ $siswa->jenis_kelamin == 'l' ? 'Laki-laki' : 'Perempuan' }}</td>
                                 <td>{{ $siswa->alamat }}</td>
                                 <td>{{ $siswa->koordinat }}</td>
@@ -186,6 +188,11 @@
                                                 <label for="nama">Nama</label>
                                                 <input type="text" name="nama" class="form-control @error('nama') is-invalid @enderror" value="{{ old('nama', $siswa->nama) }}" required>
                                                 @error('nama')
+                                                    <div class="invalid-feedback">{{ $message }}</div>
+                                                @enderror
+                                                <label for="tanggal_lahhir">Tanggal lahir</label>
+                                                <input type="date" name="tanggal_lahir" class="form-control @error('tanggal_lahir') is-invalid @enderror" value="{{ old('tanggal_lahir', $siswa->tanggal_lahir) }}" required>
+                                                @error('tanggal_lahir')
                                                     <div class="invalid-feedback">{{ $message }}</div>
                                                 @enderror
 
@@ -246,6 +253,13 @@
                                     <label for="nama" class="form-label">Nama</label>
                                     <input type="text" class="form-control @error('nama') is-invalid @enderror" id="nama" name="nama" value="{{ old('nama') }}" required>
                                     @error('nama')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                                <div class="mb-3">
+                                    <label for="tanggal_lahhir">Tanggal lahir</label>
+                                    <input type="date" name="tanggal_lahir" class="form-control @error('tanggal_lahir') is-invalid @enderror" value="{{ old('tanggal_lahir', $siswa->tanggal_lahir) }}" required>
+                                    @error('tanggal_lahir')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
                                 </div>

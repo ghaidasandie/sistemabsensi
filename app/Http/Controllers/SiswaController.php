@@ -14,6 +14,7 @@ class SiswaController extends Controller
         $validated = $request->validate([
             'nisn' => 'required|numeric',
             'nama' => 'required|string|max:255',
+            'tanggal_lahir' => 'required|date',
             'jenis_kelamin' => 'required|in:l,p',
             'alamat' => 'required|string',
             'koordinat' => 'required|string',
@@ -52,6 +53,7 @@ class SiswaController extends Controller
         $validated = $request->validate([
             'nisn' => 'required|numeric|unique:siswas,nisn',
             'nama' => 'required|string|max:255',
+            'tanggal_lahir' => 'required|date',
             'jenis_kelamin' => 'required|in:l,p',
             'alamat' => 'required|string',
             'koordinat' => 'required|string',

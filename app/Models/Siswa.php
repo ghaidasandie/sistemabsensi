@@ -10,7 +10,7 @@ class Siswa extends Model
 {
     use HasFactory;
     // protected $guarded=['id'];
-    protected $fillable = ['nisn', 'nama', 'jenis_kelamin', 'alamat', 'koordinat'];
+    protected $fillable = ['nisn', 'nama' ,'tanggal_lahir', 'jenis_kelamin', 'alamat', 'koordinat'];
     public function absensis(){
         return $this->HasMany(Absensi::class,'nisn');
     }
