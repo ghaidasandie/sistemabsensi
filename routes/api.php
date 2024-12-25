@@ -19,7 +19,7 @@ Route::post('sekolah',[SekolahController::class,'store']);
 Route::get('sekolahbyId',[SekolahController::class,'sekolahbyId']);
 Route::put('update',[SekolahController::class,'update']);
 Route::delete('delete',[SekolahController::class,'destroy']);
-Route::post('absensi',[AbsensiController::class,'store']);
+Route::post('absensi',[AbsensiController::class,'store'])->middleware('auth:sanctum');
 Route::post('login', function (Request $request) {
    $nisn = $request->nisn;
    $tanggal_lahir = $request->tanggal_lahir;
