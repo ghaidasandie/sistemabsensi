@@ -11,7 +11,7 @@ class Siswa extends Model
     use HasFactory;
     // protected $guarded=['id'];
     protected $fillable = ['nisn', 'nama' ,'tanggal_lahir', 'jenis_kelamin', 'alamat', 'koordinat'];
-    public function absensis(){
-        return $this->HasMany(Absensi::class,'nisn');
+    public function siswas(){
+        return $this->HasMany(Siswa::class,'nisn');
     }
 }

@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Data Absebsi</title>
+    <title>Data Absensi</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -40,8 +40,8 @@
 
         .sidebar a:hover {
             background-color: #495057;
-
         }
+
         .sidebar a.active {
             background-color: #007bff;
         }
@@ -68,7 +68,8 @@
         }
 
         /* Style untuk tabel */
-        .table td, .table th {
+        .table td,
+        .table th {
             vertical-align: middle;
             text-align: center;
         }
@@ -91,6 +92,16 @@
             color: #007bff;
         }
 
+        .bg-light {
+            background-color: #f0f0f0 !important;
+            color: #6c757d;
+        }
+
+        input[readonly],
+        select[disabled] {
+            pointer-events: none;
+            cursor: not-allowed;
+        }
     </style>
 </head>
 
@@ -114,7 +125,10 @@
         <div class="container mt-3">
             <h1 class="text-center mb-4">Daftar Absensi</h1>
 
-            <!-- Tabel -->
+            <!-- Button Tambah Data Absensi -->
+            <button class="btn btn-success mb-3" data-bs-toggle="modal" data-bs-target="#tambahAbsensiModal">+ Tambah Data Absensi</button>
+
+            <!-- Tabel Absensi -->
             <div class="table-responsive">
                 <table class="table table-bordered table-hover">
                     <thead class="table-dark">
@@ -130,27 +144,30 @@
                     </thead>
                     <tbody>
                         @foreach ($absensis as $absensi)
-                        <tr>
-                            <td>{{ $loop->iteration }}</td>
-                            <td>{{ $absensi->nisn }}</td>
-                            <td>{{ $absensi->status }}</td>
-                            <td>{{ $absensi->koordinat }}</td>
-                            <td>{{ $absensi->created_at->format('d M Y') }}</td>
-                            <td>{{ $absensi->updated_at->format('d M Y') }}</td>
-                            <td class="text-center">
-                                <div class="d-flex justify-content-center">
+                            <tr>
+                                <td>{{ $loop->iteration }}</td>
+                                <td>{{ $absensi->nisn }}</td>
+                                <td>{{ $absensi->status }}</td>
+                                <td>{{ $absensi->koordinat }}</td>
+                                <td>{{ $absensi->created_at->format('d M Y') }}</td>
+                                <td>{{ $absensi->updated_at->format('d M Y') }}</td>
+                                <td class="text-center">
                                     <!-- Edit Button -->
-                                    <button class="btn btn-sm btn-primary me-2">
+                                    <button class="btn btn-sm btn-primary" data-bs-toggle="modal"
+                                        data-bs-target="#editAbsensiModal{{ $absensi->id }}">
                                         <i class="bi bi-pencil-square"></i>
                                     </button>
                                     <!-- Delete Button -->
-                                    <button class="btn btn-sm btn-danger">
-                                        <i class="bi bi-trash"></i>
-                                    </button>
-                                </div>
-                            </td>
-
-                        </tr>
+                                    <form action="{{ route('absensi.destroy', $absensi->id) }}" method="POST"
+                                        onsubmit="return confirm('Yakin ingin menghapus data ini?')">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-sm btn-danger">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
                         @endforeach
                     </tbody>
                 </table>
@@ -158,39 +175,41 @@
         </div>
     </div>
 
-    <!-- Modal Tambah Data -->
-    <div class="modal fade" id="tambahSiswaModal" tabindex="-1" aria-labelledby="tambahSiswaModalLabel" aria-hidden="true">
+    <!-- Modal Tambah Data Absensi -->
+    <div class="modal fade" id="tambahAbsensiModal" tabindex="-1" aria-labelledby="tambahAbsensiModalLabel"
+        aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
-                <form action="/siswa" method="POST">
+                <form action="{{ route('absensi.store') }}" method="POST">
                     @csrf
                     <div class="modal-header">
-                        <h5 class="modal-title" id="tambahSiswaModalLabel">Tambah Data Siswa</h5>
+                        <h5 class="modal-title" id="tambahAbsensiModalLabel">Tambah Data Absensi</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
                         <div class="mb-3">
                             <label for="nisn" class="form-label">NISN</label>
-                            <input type="number" class="form-control" id="nisn" name="nisn" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="nama" class="form-label">Nama</label>
-                            <input type="text" class="form-control" id="nama" name="nama" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="jenis_kelamin" class="form-label">Jenis Kelamin</label>
-                            <select class="form-select" id="jenis_kelamin" name="jenis_kelamin" required>
-                                <option value="l">Laki-laki</option>
-                                <option value="p">Perempuan</option>
+                            <select class="form-select" id="nisn" name="nisn" required
+                                onchange="updateKoordinat()">
+                                <option value="" disabled selected>Pilih NISN</option>
+                                @foreach ($siswas as $siswa)
+                                    <option value="{{ $siswa->nisn }}" data-koordinat="{{ $siswa->koordinat }}">
+                                        {{ $siswa->nisn }} - {{ $siswa->nama }}
+                                    </option>
+                                @endforeach
                             </select>
                         </div>
                         <div class="mb-3">
-                            <label for="alamat" class="form-label">Alamat</label>
-                            <textarea class="form-control" id="alamat" name="alamat" rows="3" required></textarea>
+                            <label for="status" class="form-label">Status</label>
+                            <select class="form-select" id="status" name="status" required>
+                                <option value="i">Izin</option>
+                                <option value="s">Sakit</option>
+                                <option value="h">Alfa</option>
+                            </select>
                         </div>
                         <div class="mb-3">
                             <label for="koordinat" class="form-label">Koordinat</label>
-                            <input type="text" class="form-control" id="koordinat" name="koordinat" required>
+                            <input type="text" class="form-control" id="koordinat" name="koordinat" readonly>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -202,8 +221,76 @@
         </div>
     </div>
 
+    <!-- Modal Edit Data Absensi -->
+    @foreach ($absensis as $absensi)
+        <div class="modal fade" id="editAbsensiModal{{ $absensi->id }}" tabindex="-1"
+            aria-labelledby="editAbsensiModalLabel{{ $absensi->id }}" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <!-- Form untuk mengupdate absensi -->
+                    <form action="{{ route('absensi.update', $absensi->id) }}" method="POST">
+                        @csrf
+                        @method('PUT')
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="editAbsensiModalLabel{{ $absensi->id }}">Edit Data Absensi
+                            </h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="mb-3">
+                                <label for="nisn" class="form-label">NISN</label>
+                                <input type="text" class="form-control bg-light" value="{{ $absensi->nisn }}"
+                                    readonly>
+                            </div>
+
+                            <!-- Status (editable) -->
+                            <div class="mb-3">
+                                <label for="status" class="form-label">Status</label>
+                                <select class="form-select" id="status" name="status" required>
+                                    <option value="i" {{ $absensi->status == 'i' ? 'selected' : '' }}>Izin
+                                    </option>
+                                    <option value="s" {{ $absensi->status == 's' ? 'selected' : '' }}>Sakit
+                                    </option>
+                                    <option value="h" {{ $absensi->status == 'h' ? 'selected' : '' }}>Alfa
+                                    </option>
+                                </select>
+                            </div>
+
+                            <!-- Koordinat (readonly) -->
+                            <div class="mb-3">
+                                <label for="koordinat" class="form-label">Koordinat</label>
+                                <input type="text" class="form-control bg-light"
+                                    value="{{ $absensi->koordinat }}" readonly>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                            <button type="submit" class="btn btn-primary">Update</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    @endforeach
+
+
+
+
+
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Script untuk mengupdate koordinat saat memilih NISN -->
+    <script>
+        function updateKoordinat() {
+            var nisnSelect = document.getElementById('nisn');
+            var selectedOption = nisnSelect.options[nisnSelect.selectedIndex];
+            var koordinat = selectedOption.getAttribute('data-koordinat');
+            document.getElementById('koordinat').value = koordinat;
+        }
+    </script>
+
 </body>
 
 </html>

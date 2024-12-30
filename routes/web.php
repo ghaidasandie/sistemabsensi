@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
+use App\Http\Controllers\AbsensiController;
 
 Route::get('/login', function () {
     return view('login');
@@ -55,6 +56,21 @@ Route::post('/siswa', function (Request $request) {
     return redirect('/admin');
 })->middleware('auth');
 
+//** */ Route Absensi
+Route::get('/absensi', function () {
+    $absensis = Absensi::all();
+    $siswas = Siswa::all(); // Mengambil data siswa untuk dropdown NISN
+    return view('absensi', ['absensis' => $absensis, 'siswas' => $siswas]);
+})->middleware('auth');
+
+// Menyimpan Absensi menggunakan Route::resource yang otomatis sudah ada
+Route::resource('absensi', AbsensiController::class)->middleware('auth');
+
+/// Rute untuk update absensi (metode PUT)
+Route::put('/absensi/{id}', [AbsensiController::class, 'update'])->name('absensi.update');
+
+
+
 Route::get('/dashboard', function () {
     $siswas = Siswa::all();
     return view('dashboard', ['siswas' => $siswas]);
@@ -75,5 +91,11 @@ Route::get('/absensi', function () {
 Route::resource('siswa', SiswaController::class);
 Route::put('/siswa/{id}', [SiswaController::class, 'update'])->name('siswa.update');
 Route::put('/siswa/{id}', [SiswaController::class, 'update'])->middleware('auth')->name('siswa.update');
+
+Route::resource('absensi', AbsensiController::class);
+Route::put('/absensi/{id}', [AbsensiController::class, 'update'])->name('absensi.update');
+Route::put('/absensi/{id}', [AbsensiController::class, 'update'])->middleware('auth')->name('absensi.update');
+
+
 
 

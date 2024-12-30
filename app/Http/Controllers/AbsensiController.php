@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Absensi;
+use App\Models\Siswa; 
 use Illuminate\Http\Request;
-use Ramsey\Collection\AbstractSet;
 
 class AbsensiController extends Controller
 {
@@ -13,15 +13,12 @@ class AbsensiController extends Controller
      */
     public function index()
     {
-        //
-    }
+        // Ambil data absensi dan siswa dari database
+        $absensis = Absensi::all(); // Data absensi
+        $siswas = Siswa::all(); // Data siswa untuk dropdown NISN
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
+        // Kirim data ke view
+        return view('absensi', compact('absensis', 'siswas'));
     }
 
     /**
@@ -29,46 +26,65 @@ class AbsensiController extends Controller
      */
     public function store(Request $request)
     {
-        $nisn=$request->nisn;
-        $status=$request->status;
-        $koordinat=$request->koordinat;
-        $absensi=Absensi::create([
-            'nisn'=>$nisn,
-            'status'=>$status,
-            'koordinat'=>$koordinat
+        // Validasi data
+        $validated = $request->validate([
+            'nisn' => 'required|numeric|exists:siswas,nisn', // Pastikan NISN ada di tabel siswa
+            'status' => 'required|in:i,s,a', // Status harus izin (i), sakit (s), atau alfa (a)
+            'koordinat' => 'required|string',
         ]);
-        return $absensi;
-    }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Absensi $absensi)
-    {
-        //
-    }
+        try {
+            // Simpan data absensi baru
+            Absensi::create($validated);
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Absensi $absensi)
-    {
-        //
+            // Redirect dengan pesan sukses
+            return redirect('absensi')->with('success', 'Data absensi berhasil ditambahkan!');
+        } catch (\Exception $e) {
+            // Redirect dengan pesan error
+            return redirect('absensi')->with('error', 'Terjadi kesalahan saat menambahkan data absensi!');
+        }
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Absensi $absensi)
-    {
-        //
-    }
+    public function update(Request $request, $id)
+{
+    // Validasi input untuk status
+    $validated = $request->validate([
+        'status' => 'required|in:h,i,s', // Validasi status yang diizinkan
+    ]);
+
+    // Cari absensi berdasarkan ID
+    $absensi = Absensi::findOrFail($id);
+
+    // Hanya update status, tidak menyentuh NISN atau Koordinat
+    $absensi->status = $validated['status'];
+    $absensi->save();
+
+    // Redirect setelah update dengan pesan sukses
+    return redirect('/absensi')->with('success', 'Data absensi berhasil diperbarui!');
+}
+
+
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Absensi $absensi)
+    public function destroy($id)
     {
-        //
+        // Cari absensi berdasarkan ID
+        $absensi = Absensi::findOrFail($id);
+
+        try {
+            // Hapus absensi
+            $absensi->delete();
+
+            // Redirect dengan pesan sukses
+            return redirect('/absensi')->with('success', 'Data absensi berhasil dihapus!');
+        } catch (\Exception $e) {
+            // Redirect dengan pesan error
+            return redirect('/absensi')->with('error', 'Terjadi kesalahan saat menghapus data absensi!');
+        }
     }
 }
