@@ -26,16 +26,11 @@ class AbsensiController extends Controller
      */
     public function store(Request $request)
     {
-        // Validasi data
-        $validated = $request->validate([
-            'nisn' => 'required|numeric|exists:siswas,nisn', // Pastikan NISN ada di tabel siswa
-            'status' => 'required|in:i,s,a', // Status harus izin (i), sakit (s), atau alfa (a)
-            'koordinat' => 'required|string',
-        ]);
+
 
         try {
             // Simpan data absensi baru
-            Absensi::create($validated);
+            Absensi::create($request->all());
 
             // Redirect dengan pesan sukses
             return redirect('absensi')->with('success', 'Data absensi berhasil ditambahkan!');
