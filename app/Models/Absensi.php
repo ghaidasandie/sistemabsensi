@@ -11,7 +11,7 @@ class Absensi extends Model
     use HasFactory;
     // protected $guarded=['id'];
     protected $fillable = ['nisn', 'status', 'koordinat'];
-    public function absensis(){
-        return $this->HasMany(Absensi::class,'nisn');
+    public function siswa(){
+        return $this->belongsTo(Siswa::class,'nisn');
     }
 }

@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AbsensiController;
 use App\Http\Controllers\SekolahController;
+use App\Models\Absensi;
 use App\Models\Siswa;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -19,7 +20,17 @@ Route::post('sekolah',[SekolahController::class,'store']);
 Route::get('sekolahbyId',[SekolahController::class,'sekolahbyId']);
 Route::put('update',[SekolahController::class,'update']);
 Route::delete('delete',[SekolahController::class,'destroy']);
-Route::post('absensi',[AbsensiController::class,'store'])->middleware('auth:sanctum');
+Route::post('absensi', function(Request $request){
+  $nisn=$request->nisn;
+        $status=$request->status;
+        $koordinat=$request->koordinat;
+        $absensi=Absensi::create([
+            'nisn'=>$nisn,
+            'status'=>$status,
+            'koordinat'=>$koordinat
+        ]);
+        return $absensi;
+})->middleware('auth:sanctum');
 Route::post('login', function (Request $request) {
    $nisn = $request->nisn;
    $tanggal_lahir = $request->tanggal_lahir;
