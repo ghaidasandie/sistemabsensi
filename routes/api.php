@@ -16,10 +16,7 @@ Route::get('/', function () {
 });
 
 Route::get('sekolah',[SekolahController::class,'index']);
-Route::post('sekolah',[SekolahController::class,'store']);
 Route::get('sekolahbyId',[SekolahController::class,'sekolahbyId']);
-Route::put('update',[SekolahController::class,'update']);
-Route::delete('delete',[SekolahController::class,'destroy']);
 Route::post('absensi', function(Request $request){
   $nisn=$request->nisn;
         $status=$request->status;

@@ -19,21 +19,7 @@ class SekolahController extends Controller
     
     public function store(Request $request)
     {
-        $nama = $request->nama;
-        $alamat = $request->alamat;
-        $koordinat = $request->koordinat;
-        Sekolah::create(
-            [
-                'nama'=>$nama,
-                'alamat'=>$alamat,
-                'koordinat'=>$koordinat
-            ]
-        );
-        return [
-            $nama,
-            $alamat,
-            $koordinat
-        ];
+       
     }
 
     public function sekolahbyId(Request $request)
@@ -48,23 +34,7 @@ class SekolahController extends Controller
      */
     public function update(Request $request, Sekolah $sekolah)
     {
-        $nama = $request->nama;
-        $alamat = $request->alamat;
-        $koordinat = $request->koordinat;
-        $id = $request->id;
-        $sekolah=Sekolah::find($id);
-        $sekolah->update(
-            [
-                'nama'=>$nama,
-                'alamat'=>$alamat,
-                'koordinat'=>$koordinat
-            ]
-            );
-        return [
-            $nama,
-            $alamat,
-            $koordinat
-        ];
+       
     }
 
     /**
@@ -72,8 +42,6 @@ class SekolahController extends Controller
      */
     public function destroy(Sekolah $sekolah, Request $request)
     {
-        $id = $request->id;
-        $sekolah=Sekolah::find($id);
-        $sekolah->delete();
+      
     }
 }
