@@ -4,6 +4,7 @@ use App\Http\Controllers\AbsensiController;
 use App\Http\Controllers\SekolahController;
 use App\Models\Absensi;
 use App\Models\Siswa;
+use App\Models\User;
 use App\Models\Status;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -69,5 +70,13 @@ Route::get('cek-status',function(){
     $status = Status::first()->status;
     return response()->json([
         'status'=>$status
+    ]);
+});
+Route::get('/generate-token', function () {
+    //Generate sanctum token
+    $user = User::first();
+    $token = $user->createToken('absensi')->plainTextToken;
+    return response()->json([
+        'token' => $token
     ]);
 });
