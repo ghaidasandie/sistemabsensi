@@ -63,4 +63,11 @@ Route::get("cek-jam",function(){
         "isValid" => $isValid
     ]);
 
+
+});
+Route::get('cek-status',function(){
+    $status = Status::first()->status;
+    return response()->json([
+        'status'=>$status
+    ]);
 });
