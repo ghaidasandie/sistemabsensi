@@ -4,6 +4,7 @@ use App\Http\Controllers\AbsensiController;
 use App\Http\Controllers\SekolahController;
 use App\Models\Absensi;
 use App\Models\Siswa;
+use App\Models\Status;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -38,4 +39,28 @@ Route::post('login', function (Request $request) {
      }
      return response()->json(['ERORR'=>'Data Invalid'],400);
    }
+});
+
+Route::get("cek-jam",function(){
+    $now = new DateTime("now", new DateTimeZone("Asia/Jakarta"));
+    $now = $now->format("H:i:s");
+
+    $status = Status::first();
+
+    if (!$status) {
+        return response()->json(["message" => "Data status tidak ditemukan"], 404);
+    }
+
+    $start = $status->mulai;
+    $end = $status->selesai;
+    // $now = '08:00:00';
+
+    $isValid = ($now >= $start && $now <= $end);
+    return response()->json([
+        "now" => $now,
+        "start" => $start,
+        "end" => $end,
+        "isValid" => $isValid
+    ]);
+
 });

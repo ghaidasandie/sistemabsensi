@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\Sekolah;
 use App\Models\Siswa;
+use App\Models\Status;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -35,5 +36,12 @@ class DatabaseSeeder extends Seeder
             'koordinat' => '-6.940370163971576, 107.62500684232282'
         ]);
         Siswa::factory()->count(5)->create();
+
+        Status::create([
+            'status' => 'offline',
+            'mulai' => '07:00:00',
+            'selesai' => '08:00:00',
+
+        ]);
     }
 }
