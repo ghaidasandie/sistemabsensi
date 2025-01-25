@@ -172,6 +172,35 @@
                     </tbody>
                 </table>
             </div>
+
+            <!-- Pagination -->
+            <div class="d-flex justify-content-center mt-4">
+                <nav aria-label="Page navigation example">
+                    <ul class="pagination">
+                        <!-- Previous Button -->
+                        <li class="page-item {{ $absensis->onFirstPage() ? 'disabled' : '' }}">
+                            <a class="page-link" href="{{ $absensis->previousPageUrl() }}" aria-label="Previous">
+                                <span aria-hidden="true">&laquo;</span>
+                            </a>
+                        </li>
+
+                        <!-- Pagination Numbers -->
+                        @for ($i = 1; $i <= $absensis->lastPage(); $i++)
+                            <li class="page-item {{ $i == $absensis->currentPage() ? 'active' : '' }}">
+                                <a class="page-link" href="{{ $absensis->url($i) }}">{{ $i }}</a>
+                            </li>
+                        @endfor
+
+                        <!-- Next Button -->
+                        <li class="page-item {{ $absensis->hasMorePages() ? '' : 'disabled' }}">
+                            <a class="page-link" href="{{ $absensis->nextPageUrl() }}" aria-label="Next">
+                                <span aria-hidden="true">&raquo;</span>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+
         </div>
     </div>
 
@@ -252,7 +281,7 @@
                                     </option>
                                     <option value="s" {{ $absensi->status == 's' ? 'selected' : '' }}>Sakit
                                     </option>
-                                    <option value="h" {{ $absensi->status == 'h' ? 'selected' : '' }}>Alfa
+                                    <option value="a" {{ $absensi->status == 'a' ? 'selected' : '' }}>Alfa
                                     </option>
                                 </select>
                             </div>
@@ -273,10 +302,6 @@
             </div>
         </div>
     @endforeach
-
-
-
-
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

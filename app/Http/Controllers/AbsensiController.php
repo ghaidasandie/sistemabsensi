@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Absensi;
-use App\Models\Siswa; 
+use App\Models\Siswa;
 use Illuminate\Http\Request;
 
 class AbsensiController extends Controller
@@ -12,14 +12,15 @@ class AbsensiController extends Controller
      * Display a listing of the resource.
      */
     public function index()
-    {
-        // Ambil data absensi dan siswa dari database
-        $absensis = Absensi::all(); // Data absensi
-        $siswas = Siswa::all(); // Data siswa untuk dropdown NISN
+{
+    // Ambil data absensi dengan pagination (10 data per halaman)
+    $absensis = Absensi::paginate(10); // Menggunakan paginate untuk membatasi 10 data per halaman
+    $siswas = Siswa::all(); // Data siswa untuk dropdown NISN
 
-        // Kirim data ke view
-        return view('absensi', compact('absensis', 'siswas'));
-    }
+    // Kirim data ke view
+    return view('absensi', compact('absensis', 'siswas'));
+}
+
 
     /**
      * Store a newly created resource in storage.
@@ -47,7 +48,7 @@ class AbsensiController extends Controller
 {
     // Validasi input untuk status
     $validated = $request->validate([
-        'status' => 'required|in:h,i,s', // Validasi status yang diizinkan
+        'status' => 'required|in:a,i,s', // Validasi status yang diizinkan
     ]);
 
     // Cari absensi berdasarkan ID
