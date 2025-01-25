@@ -102,6 +102,53 @@
             pointer-events: none;
             cursor: not-allowed;
         }
+
+        /* Pagination Styling */
+        .pagination {
+            margin: 0;
+            padding: 0;
+        }
+
+        .pagination .page-item {
+            margin: 0 5px;
+        }
+
+        .pagination .page-link {
+            border-radius: 50px;
+            padding: 8px 16px;
+            font-size: 14px;
+            color: #007bff;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .pagination .page-link:hover {
+            background-color: #007bff;
+            color: #fff;
+        }
+
+        .pagination .page-item.active .page-link {
+            background-color: #007bff;
+            color: white;
+            border-color: #007bff;
+        }
+
+        .pagination .page-item.disabled .page-link {
+            color: #6c757d;
+            background-color: #f8f9fa;
+            border-color: #ddd;
+        }
+
+        .pagination .page-item:first-child .page-link {
+            border-top-left-radius: 50px;
+            border-bottom-left-radius: 50px;
+        }
+
+        .pagination .page-item:last-child .page-link {
+            border-top-right-radius: 50px;
+            border-bottom-right-radius: 50px;
+        }
     </style>
 </head>
 
@@ -145,7 +192,8 @@
                     <tbody>
                         @foreach ($absensis as $absensi)
                             <tr>
-                                <td>{{ $loop->iteration }}</td>
+                                <!-- Gunakan offset untuk nomor urut -->
+                                <td>{{ $loop->iteration + ($absensis->currentPage() - 1) * $absensis->perPage() }}</td>
                                 <td>{{ $absensi->nisn }}</td>
                                 <td>{{ $absensi->status }}</td>
                                 <td>{{ $absensi->koordinat }}</td>
@@ -175,28 +223,36 @@
 
             <!-- Pagination -->
             <div class="d-flex justify-content-center mt-4">
-                <nav aria-label="Page navigation example">
+                <nav aria-label="Page navigation">
                     <ul class="pagination">
-                        <!-- Previous Button -->
-                        <li class="page-item {{ $absensis->onFirstPage() ? 'disabled' : '' }}">
-                            <a class="page-link" href="{{ $absensis->previousPageUrl() }}" aria-label="Previous">
-                                <span aria-hidden="true">&laquo;</span>
-                            </a>
-                        </li>
-
-                        <!-- Pagination Numbers -->
-                        @for ($i = 1; $i <= $absensis->lastPage(); $i++)
-                            <li class="page-item {{ $i == $absensis->currentPage() ? 'active' : '' }}">
-                                <a class="page-link" href="{{ $absensis->url($i) }}">{{ $i }}</a>
+                        <!-- Previous Page Link -->
+                        @if ($absensis->onFirstPage())
+                            <li class="page-item disabled">
+                                <span class="page-link">Previous</span>
                             </li>
-                        @endfor
+                        @else
+                            <li class="page-item">
+                                <a class="page-link" href="{{ $absensis->previousPageUrl() }}" aria-label="Previous">Previous</a>
+                            </li>
+                        @endif
 
-                        <!-- Next Button -->
-                        <li class="page-item {{ $absensis->hasMorePages() ? '' : 'disabled' }}">
-                            <a class="page-link" href="{{ $absensis->nextPageUrl() }}" aria-label="Next">
-                                <span aria-hidden="true">&raquo;</span>
-                            </a>
-                        </li>
+                        <!-- Page Number Links -->
+                        @foreach ($absensis->getUrlRange(1, $absensis->lastPage()) as $page => $url)
+                            <li class="page-item {{ $page == $absensis->currentPage() ? 'active' : '' }}">
+                                <a class="page-link" href="{{ $url }}">{{ $page }}</a>
+                            </li>
+                        @endforeach
+
+                        <!-- Next Page Link -->
+                        @if ($absensis->hasMorePages())
+                            <li class="page-item">
+                                <a class="page-link" href="{{ $absensis->nextPageUrl() }}" aria-label="Next">Next</a>
+                            </li>
+                        @else
+                            <li class="page-item disabled">
+                                <span class="page-link">Next</span>
+                            </li>
+                        @endif
                     </ul>
                 </nav>
             </div>
@@ -276,20 +332,17 @@
                             <!-- Status (editable) -->
                             <div class="mb-3">
                                 <label for="status" class="form-label">Status</label>
-                                <select class="form-select" id="status" name="status" required>
-                                    <option value="i" {{ $absensi->status == 'i' ? 'selected' : '' }}>Izin
-                                    </option>
-                                    <option value="s" {{ $absensi->status == 's' ? 'selected' : '' }}>Sakit
-                                    </option>
-                                    <option value="a" {{ $absensi->status == 'a' ? 'selected' : '' }}>Alfa
-                                    </option>
+                                <select class="form-select" name="status" required>
+                                    <option value="i" {{ $absensi->status == 'i' ? 'selected' : '' }}>Izin</option>
+                                    <option value="s" {{ $absensi->status == 's' ? 'selected' : '' }}>Sakit</option>
+                                    <option value="h" {{ $absensi->status == 'h' ? 'selected' : '' }}>Alfa</option>
                                 </select>
                             </div>
 
                             <!-- Koordinat (readonly) -->
                             <div class="mb-3">
                                 <label for="koordinat" class="form-label">Koordinat</label>
-                                <input type="text" class="form-control bg-light"
+                                <input type="text" class="form-control" id="koordinat" name="koordinat"
                                     value="{{ $absensi->koordinat }}" readonly>
                             </div>
                         </div>
@@ -305,17 +358,15 @@
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
-    <!-- Script untuk mengupdate koordinat saat memilih NISN -->
     <script>
+        // Script untuk mengupdate koordinat ketika memilih NISN
         function updateKoordinat() {
-            var nisnSelect = document.getElementById('nisn');
-            var selectedOption = nisnSelect.options[nisnSelect.selectedIndex];
-            var koordinat = selectedOption.getAttribute('data-koordinat');
-            document.getElementById('koordinat').value = koordinat;
+            const nisnSelect = document.getElementById('nisn');
+            const koordinatInput = document.getElementById('koordinat');
+            const selectedOption = nisnSelect.options[nisnSelect.selectedIndex];
+            koordinatInput.value = selectedOption.getAttribute('data-koordinat');
         }
     </script>
-
 </body>
 
 </html>
