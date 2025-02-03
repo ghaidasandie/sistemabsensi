@@ -44,6 +44,41 @@
             background-color: #007bff;
         }
 
+        .table th,
+        .table td {
+            padding: 12px 15px;
+            text-align: center;
+        }
+
+        .table th {
+            background-color: #343a40;
+            color: white;
+        }
+
+        .table td {
+            vertical-align: middle;
+        }
+
+        .table-hover tbody tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        /* Modal Responsive */
+        .modal-dialog {
+            max-width: 800px;
+            /* Atur lebar maksimal modal */
+        }
+
+        .modal-content {
+            border-radius: 10px;
+        }
+
+        /* Peningkatan Tombol pada Tabel */
+        .btn-sm {
+            font-size: 14px;
+            padding: 5px 10px;
+        }
+
         /* Logout Button Styles */
         .logout-btn {
             width: 100%;
@@ -65,6 +100,7 @@
             margin-left: 260px;
             padding: 20px;
         }
+
         .pagination {
             margin: 0;
             padding: 0;
@@ -132,12 +168,18 @@
     <div class="content">
         <div class="container mt-3">
             <h1 class="text-center mb-4">Daftar Siswa</h1>
-
-            <!-- Add Student Button -->
             <div class="d-flex justify-content-between mb-3">
+                <!-- Tombol Tambah Data Siswa -->
                 <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#tambahSiswaModal">+ Tambah Data
                     Siswa</button>
+
+                <form action="{{ route('siswa.search') }}" method="GET" class="d-flex w-50">
+                    <input type="text" name="search" class="form-control"
+                        placeholder="Cari berdasarkan nama atau NISN" value="{{ request()->get('search') }}">
+                    <button type="submit" class="btn btn-primary ms-2">Cari</button>
+                </form>
             </div>
+
 
             <!-- Success Notification using SweetAlert -->
             @if (session('success'))
@@ -168,11 +210,10 @@
                     });
                 </script>
             @endif
-
             <!-- Table of Students -->
             <div class="table-responsive">
                 <table class="table table-bordered table-hover">
-                    <thead class="table-dark">
+                    <thead>
                         <tr>
                             <th>NO</th>
                             <th>NISN</th>
@@ -199,20 +240,20 @@
                                 <td>{{ $siswa->created_at->format('d M Y') }}</td>
                                 <td>{{ $siswa->updated_at->format('d M Y') }}</td>
                                 <td class="text-center">
-                                    <!-- Edit Button -->
-                                    <button class="btn btn-sm btn-primary" data-bs-toggle="modal"
-                                        data-bs-target="#editSiswaModal{{ $siswa->id }}">
-                                        <i class="bi bi-pencil-square"></i>
-                                    </button>
-                                    <!-- Delete Button -->
-                                    <form action="{{ route('siswa.destroy', $siswa->id) }}" method="POST"
-                                        onsubmit="return confirm('Yakin ingin menghapus data ini?')">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="btn btn-sm btn-danger">
-                                            <i class="bi bi-trash"></i>
+                                    <div class="d-flex justify-content-center gap-2">
+                                        <button class="btn btn-sm btn-primary" data-bs-toggle="modal"
+                                            data-bs-target="#editSiswaModal{{ $siswa->id }}">
+                                            <i class="bi bi-pencil-square"></i>
                                         </button>
-                                    </form>
+                                        <form action="{{ route('siswa.destroy', $siswa->id) }}" method="POST"
+                                            onsubmit="return confirm('Yakin ingin menghapus data ini?')">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn btn-sm btn-danger">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </form>
+                                    </div>
                                 </td>
                             </tr>
                         @endforeach

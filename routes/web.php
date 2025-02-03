@@ -95,6 +95,7 @@ Route::put('/siswa/{id}', [SiswaController::class, 'update'])->middleware('auth'
 Route::resource('absensi', AbsensiController::class);
 Route::put('/absensi/{id}', [AbsensiController::class, 'update'])->name('absensi.update');
 Route::put('/absensi/{id}', [AbsensiController::class, 'update'])->middleware('auth')->name('absensi.update');
+Route::get('/admin/search', [SiswaController::class, 'search'])->name('siswa.search');
 
 
 

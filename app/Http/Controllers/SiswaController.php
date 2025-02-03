@@ -106,5 +106,15 @@ class SiswaController extends Controller
         // Redirect dengan pesan sukses
         return redirect('/admin')->with('success', 'Data siswa berhasil dihapus!');
     }
+    public function search(Request $request)
+    {
+        $keyword = $request->input('search');
 
+        // Gunakan paginasi untuk hasil pencarian
+        $siswas = Siswa::where('nama', 'like', "%$keyword%")
+                       ->orWhere('nisn', 'like', "%$keyword%")
+                       ->paginate(10);  // Menambahkan paginasi
+
+        return view('admin', compact('siswas'));
+    }
 }
