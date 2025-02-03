@@ -33,7 +33,7 @@ class DatabaseSeeder extends Seeder
             'tanggal_lahir' => '1999-08-15',
             'jenis_kelamin' => 'l',
             'alamat' => 'Jl.Bubat Babet',
-            'koordinat' => '-6.940370163971576, 107.62500684232282'
+            'koordinat' => '-6.7965517,106.7580333'
         ]);
         Siswa::factory()->count(5)->create();
 

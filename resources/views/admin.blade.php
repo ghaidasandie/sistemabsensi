@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -64,8 +65,54 @@
             margin-left: 260px;
             padding: 20px;
         }
+        .pagination {
+            margin: 0;
+            padding: 0;
+        }
+
+        .pagination .page-item {
+            margin: 0 5px;
+        }
+
+        .pagination .page-link {
+            border-radius: 50px;
+            padding: 8px 16px;
+            font-size: 14px;
+            color: #007bff;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .pagination .page-link:hover {
+            background-color: #007bff;
+            color: #fff;
+        }
+
+        .pagination .page-item.active .page-link {
+            background-color: #007bff;
+            color: white;
+            border-color: #007bff;
+        }
+
+        .pagination .page-item.disabled .page-link {
+            color: #6c757d;
+            background-color: #f8f9fa;
+            border-color: #ddd;
+        }
+
+        .pagination .page-item:first-child .page-link {
+            border-top-left-radius: 50px;
+            border-bottom-left-radius: 50px;
+        }
+
+        .pagination .page-item:last-child .page-link {
+            border-top-right-radius: 50px;
+            border-bottom-right-radius: 50px;
+        }
     </style>
 </head>
+
 <body>
     <!-- Sidebar -->
     <div class="sidebar">
@@ -88,13 +135,14 @@
 
             <!-- Add Student Button -->
             <div class="d-flex justify-content-between mb-3">
-                <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#tambahSiswaModal">+ Tambah Data Siswa</button>
+                <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#tambahSiswaModal">+ Tambah Data
+                    Siswa</button>
             </div>
 
             <!-- Success Notification using SweetAlert -->
-            @if(session('success'))
+            @if (session('success'))
                 <script>
-                    document.addEventListener('DOMContentLoaded', function () {
+                    document.addEventListener('DOMContentLoaded', function() {
                         Swal.fire({
                             icon: 'success',
                             title: 'Berhasil!',
@@ -107,9 +155,9 @@
             @endif
 
             <!-- Error Notification -->
-            @if(session('error'))
+            @if (session('error'))
                 <script>
-                    document.addEventListener('DOMContentLoaded', function () {
+                    document.addEventListener('DOMContentLoaded', function() {
                         Swal.fire({
                             icon: 'error',
                             title: 'Gagal!',
@@ -141,7 +189,7 @@
                     <tbody>
                         @foreach ($siswas as $siswa)
                             <tr>
-                                <td>{{ $loop->iteration }}</td>
+                                <td>{{ ($siswas->currentPage() - 1) * $siswas->perPage() + $loop->iteration }}</td>
                                 <td>{{ $siswa->nisn }}</td>
                                 <td>{{ $siswa->nama }}</td>
                                 <td>{{ $siswa->tanggal_lahir }}</td>
@@ -152,11 +200,13 @@
                                 <td>{{ $siswa->updated_at->format('d M Y') }}</td>
                                 <td class="text-center">
                                     <!-- Edit Button -->
-                                    <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#editSiswaModal{{ $siswa->id }}">
+                                    <button class="btn btn-sm btn-primary" data-bs-toggle="modal"
+                                        data-bs-target="#editSiswaModal{{ $siswa->id }}">
                                         <i class="bi bi-pencil-square"></i>
                                     </button>
                                     <!-- Delete Button -->
-                                    <form action="{{ route('siswa.destroy', $siswa->id) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus data ini?')">
+                                    <form action="{{ route('siswa.destroy', $siswa->id) }}" method="POST"
+                                        onsubmit="return confirm('Yakin ingin menghapus data ini?')">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" class="btn btn-sm btn-danger">
@@ -165,109 +215,182 @@
                                     </form>
                                 </td>
                             </tr>
-
-                            <!-- Edit Modal -->
-                            <div class="modal fade" id="editSiswaModal{{ $siswa->id }}" tabindex="-1" aria-labelledby="editSiswaModalLabel{{ $siswa->id }}" aria-hidden="true">
-                                <div class="modal-dialog">
-                                    <div class="modal-content">
-                                        <form action="{{ route('siswa.update', $siswa->id) }}" method="POST">
-                                            @csrf
-                                            @method('PUT')
-                                            <div class="modal-header">
-                                                <h5 class="modal-title" id="editSiswaModalLabel{{ $siswa->id }}">Edit Data Siswa</h5>
-                                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                                            </div>
-                                            <div class="modal-body">
-                                                <!-- Form Fields -->
-                                                <label for="nisn">NISN</label>
-                                                <input type="number" name="nisn" class="form-control @error('nisn') is-invalid @enderror" value="{{ old('nisn', $siswa->nisn) }}" required>
-                                                @error('nisn')
-                                                    <div class="invalid-feedback">{{ $message }}</div>
-                                                @enderror
-
-                                                <label for="nama">Nama</label>
-                                                <input type="text" name="nama" class="form-control @error('nama') is-invalid @enderror" value="{{ old('nama', $siswa->nama) }}" required>
-                                                @error('nama')
-                                                    <div class="invalid-feedback">{{ $message }}</div>
-                                                @enderror
-                                                <label for="tanggal_lahhir">Tanggal lahir</label>
-                                                <input type="date" name="tanggal_lahir" class="form-control @error('tanggal_lahir') is-invalid @enderror" value="{{ old('tanggal_lahir', $siswa->tanggal_lahir) }}" required>
-                                                @error('tanggal_lahir')
-                                                    <div class="invalid-feedback">{{ $message }}</div>
-                                                @enderror
-
-                                                <label for="jenis_kelamin">Jenis Kelamin</label>
-                                                <select name="jenis_kelamin" class="form-select @error('jenis_kelamin') is-invalid @enderror">
-                                                    <option value="l" {{ $siswa->jenis_kelamin == 'l' ? 'selected' : '' }}>Laki-laki</option>
-                                                    <option value="p" {{ $siswa->jenis_kelamin == 'p' ? 'selected' : '' }}>Perempuan</option>
-                                                </select>
-                                                @error('jenis_kelamin')
-                                                    <div class="invalid-feedback">{{ $message }}</div>
-                                                @enderror
-
-                                                <label for="alamat">Alamat</label>
-                                                <textarea name="alamat" class="form-control @error('alamat') is-invalid @enderror" required>{{ old('alamat', $siswa->alamat) }}</textarea>
-                                                @error('alamat')
-                                                    <div class="invalid-feedback">{{ $message }}</div>
-                                                @enderror
-
-                                                <label for="koordinat">Koordinat</label>
-                                                <input type="text" name="koordinat" class="form-control @error('koordinat') is-invalid @enderror" value="{{ old('koordinat', $siswa->koordinat) }}" required>
-                                                @error('koordinat')
-                                                    <div class="invalid-feedback">{{ $message }}</div>
-                                                @enderror
-                                            </div>
-                                            <div class="modal-footer">
-                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                                                <button type="submit" class="btn btn-success">Simpan</button>
-                                            </div>
-                                        </form>
-                                    </div>
-                                </div>
-                            </div>
                         @endforeach
                     </tbody>
                 </table>
             </div>
+            <!-- Modal Edit Siswa -->
+            @foreach ($siswas as $siswa)
+                <div class="modal fade" id="editSiswaModal{{ $siswa->id }}" tabindex="-1"
+                    aria-labelledby="editSiswaModalLabel{{ $siswa->id }}" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <form action="{{ route('siswa.update', $siswa->id) }}" method="POST">
+                                @csrf
+                                @method('PUT')
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="editSiswaModalLabel{{ $siswa->id }}">Edit Data Siswa
+                                    </h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                        aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <!-- Form Fields for Editing Student Data -->
+                                    <div class="mb-3">
+                                        <label for="nisn" class="form-label">NISN</label>
+                                        <input type="number" class="form-control @error('nisn') is-invalid @enderror"
+                                            id="nisn" name="nisn" value="{{ old('nisn', $siswa->nisn) }}"
+                                            required>
+                                        @error('nisn')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="nama" class="form-label">Nama</label>
+                                        <input type="text" class="form-control @error('nama') is-invalid @enderror"
+                                            id="nama" name="nama" value="{{ old('nama', $siswa->nama) }}"
+                                            required>
+                                        @error('nama')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="tanggal_lahir">Tanggal Lahir</label>
+                                        <input type="date" name="tanggal_lahir"
+                                            class="form-control @error('tanggal_lahir') is-invalid @enderror"
+                                            value="{{ old('tanggal_lahir', $siswa->tanggal_lahir) }}" required>
+                                        @error('tanggal_lahir')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="jenis_kelamin" class="form-label">Jenis Kelamin</label>
+                                        <select class="form-select @error('jenis_kelamin') is-invalid @enderror"
+                                            name="jenis_kelamin" required>
+                                            <option value="l"
+                                                {{ old('jenis_kelamin', $siswa->jenis_kelamin) == 'l' ? 'selected' : '' }}>
+                                                Laki-laki</option>
+                                            <option value="p"
+                                                {{ old('jenis_kelamin', $siswa->jenis_kelamin) == 'p' ? 'selected' : '' }}>
+                                                Perempuan</option>
+                                        </select>
+                                        @error('jenis_kelamin')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="alamat" class="form-label">Alamat</label>
+                                        <textarea class="form-control @error('alamat') is-invalid @enderror" id="alamat" name="alamat" required>{{ old('alamat', $siswa->alamat) }}</textarea>
+                                        @error('alamat')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="koordinat" class="form-label">Koordinat</label>
+                                        <input type="text"
+                                            class="form-control @error('koordinat') is-invalid @enderror"
+                                            id="koordinat" name="koordinat"
+                                            value="{{ old('koordinat', $siswa->koordinat) }}" required>
+                                        @error('koordinat')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary"
+                                        data-bs-dismiss="modal">Batal</button>
+                                    <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            @endforeach
+
+            <!-- Pagination -->
+            <div class="d-flex justify-content-center mt-3">
+                <nav aria-label="Page navigation">
+                    <ul class="pagination">
+                        <!-- Previous Page Link -->
+                        @if ($siswas->onFirstPage())
+                            <li class="page-item disabled">
+                                <span class="page-link">Previous</span>
+                            </li>
+                        @else
+                            <li class="page-item">
+                                <a class="page-link" href="{{ $siswas->previousPageUrl() }}"
+                                    aria-label="Previous">Previous</a>
+                            </li>
+                        @endif
+
+                        <!-- Page Number Links -->
+                        @foreach ($siswas->getUrlRange(1, $siswas->lastPage()) as $page => $url)
+                            <li class="page-item {{ $siswas->currentPage() == $page ? 'active' : '' }}">
+                                <a class="page-link" href="{{ $url }}">{{ $page }}</a>
+                            </li>
+                        @endforeach
+
+                        <!-- Next Page Link -->
+                        @if ($siswas->hasMorePages())
+                            <li class="page-item">
+                                <a class="page-link" href="{{ $siswas->nextPageUrl() }}" aria-label="Next">Next</a>
+                            </li>
+                        @else
+                            <li class="page-item disabled">
+                                <span class="page-link">Next</span>
+                            </li>
+                        @endif
+                    </ul>
+                </nav>
+            </div>
 
             <!-- Add Data Modal -->
-            <div class="modal fade" id="tambahSiswaModal" tabindex="-1" aria-labelledby="tambahSiswaModalLabel" aria-hidden="true">
+            <div class="modal fade" id="tambahSiswaModal" tabindex="-1" aria-labelledby="tambahSiswaModalLabel"
+                aria-hidden="true">
                 <div class="modal-dialog">
                     <div class="modal-content">
                         <form action="{{ route('siswa.store') }}" method="POST">
                             @csrf
                             <div class="modal-header">
                                 <h5 class="modal-title" id="tambahSiswaModalLabel">Tambah Data Siswa</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="Close"></button>
                             </div>
                             <div class="modal-body">
                                 <!-- Form Fields for Student Data -->
                                 <div class="mb-3">
                                     <label for="nisn" class="form-label">NISN</label>
-                                    <input type="number" class="form-control @error('nisn') is-invalid @enderror" id="nisn" name="nisn" value="{{ old('nisn') }}" required>
+                                    <input type="number" class="form-control @error('nisn') is-invalid @enderror"
+                                        id="nisn" name="nisn" value="{{ old('nisn') }}" required>
                                     @error('nisn')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
                                 </div>
                                 <div class="mb-3">
                                     <label for="nama" class="form-label">Nama</label>
-                                    <input type="text" class="form-control @error('nama') is-invalid @enderror" id="nama" name="nama" value="{{ old('nama') }}" required>
+                                    <input type="text" class="form-control @error('nama') is-invalid @enderror"
+                                        id="nama" name="nama" value="{{ old('nama') }}" required>
                                     @error('nama')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
                                 </div>
                                 <div class="mb-3">
                                     <label for="tanggal_lahhir">Tanggal lahir</label>
-                                    <input type="date" name="tanggal_lahir" class="form-control @error('tanggal_lahir') is-invalid @enderror" value="{{ old('tanggal_lahir', $siswa->tanggal_lahir) }}" required>
+                                    <input type="date" name="tanggal_lahir"
+                                        class="form-control @error('tanggal_lahir') is-invalid @enderror"
+                                        value="{{ old('tanggal_lahir') }}" required>
                                     @error('tanggal_lahir')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
                                 </div>
                                 <div class="mb-3">
                                     <label for="jenis_kelamin" class="form-label">Jenis Kelamin</label>
-                                    <select class="form-select @error('jenis_kelamin') is-invalid @enderror" name="jenis_kelamin" required>
-                                        <option value="l" {{ old('jenis_kelamin') == 'l' ? 'selected' : '' }}>Laki-laki</option>
-                                        <option value="p" {{ old('jenis_kelamin') == 'p' ? 'selected' : '' }}>Perempuan</option>
+                                    <select class="form-select @error('jenis_kelamin') is-invalid @enderror"
+                                        name="jenis_kelamin" required>
+                                        <option value="l" {{ old('jenis_kelamin') == 'l' ? 'selected' : '' }}>
+                                            Laki-laki</option>
+                                        <option value="p" {{ old('jenis_kelamin') == 'p' ? 'selected' : '' }}>
+                                            Perempuan</option>
                                     </select>
                                     @error('jenis_kelamin')
                                         <div class="invalid-feedback">{{ $message }}</div>
@@ -282,14 +405,17 @@
                                 </div>
                                 <div class="mb-3">
                                     <label for="koordinat" class="form-label">Koordinat</label>
-                                    <input type="text" class="form-control @error('koordinat') is-invalid @enderror" id="koordinat" name="koordinat" value="{{ old('koordinat') }}" required>
+                                    <input type="text"
+                                        class="form-control @error('koordinat') is-invalid @enderror" id="koordinat"
+                                        name="koordinat" value="{{ old('koordinat') }}" required>
                                     @error('koordinat')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
                                 </div>
                             </div>
                             <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                                <button type="button" class="btn btn-secondary"
+                                    data-bs-dismiss="modal">Batal</button>
                                 <button type="submit" class="btn btn-primary">Tambah</button>
                             </div>
                         </form>
@@ -303,4 +429,5 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.5.0/dist/sweetalert2.all.min.js"></script>
 </body>
+
 </html>

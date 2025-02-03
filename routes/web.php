@@ -26,7 +26,7 @@ Route::post('/login', function (Request $request) {
 });
 
 Route::get('/admin', function () {
-    $siswas = Siswa::all();
+    $siswas = Siswa::paginate(5);
     return view('admin', ['siswas' => $siswas]);
 })->middleware('auth');
 

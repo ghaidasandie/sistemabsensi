@@ -34,7 +34,8 @@ class SiswaController extends Controller
      */
     public function index()
     {
-        //
+        $siswas = Siswa::paginate(5);
+        return view('admin', ['siswas' => $siswas]);
     }
 
     /**
