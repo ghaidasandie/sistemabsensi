@@ -64,6 +64,55 @@
             margin-left: 260px;
             padding: 20px;
         }
+
+        .card-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(18rem, 1fr));
+            gap: 20px;
+        }
+
+        .card {
+            margin-bottom: 20px;
+        }
+
+        /* Custom Colors for Ranking */
+        .bg-rank-1 {
+            background-color: #28a745;
+        }
+
+        .bg-rank-2 {
+            background-color: #007bff;
+        }
+
+        .bg-rank-3 {
+            background-color: #ffc107;
+        }
+
+        .bg-rank-other {
+            background-color: #f8f9fa;
+        }
+
+        .bg-rank-bottom-1 {
+            background-color: #dc3545;
+        }
+
+        .bg-rank-bottom-2 {
+            background-color: #c82333;
+        }
+
+        .bg-rank-bottom-3 {
+            background-color: #bd2130;
+        }
+
+        .bg-rank-bottom-other {
+            background-color: #f8d7da;
+        }
+
+        .section-separator {
+            margin-top: 40px;
+            border-top: 3px solid #ddd;
+            margin-bottom: 40px;
+        }
     </style>
 </head>
 
@@ -84,8 +133,40 @@
 
     <!-- Content -->
     <div class="content">
-        <!-- Your content goes here -->
-        <h1>Welcome to Data Siswa</h1>
+        <h1 class="text-center mb-4">Ranking Siswa Berdasarkan Absensi</h1>
+        <div class="section-separator"></div>
+
+        <!-- Card Ranking Terbaik -->
+        <h3 class="mb-4 text-success">5 Ranking Terbaik</h3>
+        <div class="card-container">
+            @foreach ($topRanking->unique('nisn') as $index => $siswa)
+                <div class="card
+                    {{ $index == 0 ? 'bg-rank-1' : ($index == 1 ? 'bg-rank-2' : ($index == 2 ? 'bg-rank-3' : 'bg-rank-other')) }}">
+                    <div class="card-body">
+                        <h5 class="card-title">Ranking {{ $index + 1 }}</h5>
+                        <h6 class="card-subtitle mb-2">{{ $siswa->nama }}</h6>
+                        <p class="card-text"><strong>Total Poin:</strong> {{ $siswa->total_points }} Poin</p>
+                    </div>
+                </div>
+            @endforeach
+        </div>
+
+        <div class="section-separator"></div>
+
+        <!-- Card Ranking Terburuk -->
+        <h3 class="mb-4 text-danger">5 Ranking Terburuk</h3>
+        <div class="card-container">
+            @foreach ($bottomRanking->unique('nisn') as $index => $siswa)
+                <div class="card
+                    {{ $index == 0 ? 'bg-rank-bottom-1' : ($index == 1 ? 'bg-rank-bottom-2' : ($index == 2 ? 'bg-rank-bottom-3' : 'bg-rank-bottom-other')) }}">
+                    <div class="card-body">
+                        <h5 class="card-title">Ranking {{ $index + 1 }}</h5>
+                        <h6 class="card-subtitle mb-2">{{ $siswa->nama }}</h6>
+                        <p class="card-text"><strong>Total Poin:</strong> {{ $siswa->total_points }} Poin</p>
+                    </div>
+                </div>
+            @endforeach
+        </div>
     </div>
 
     <!-- Bootstrap JS -->

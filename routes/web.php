@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use App\Http\Controllers\AbsensiController;
+use App\Http\Controllers\DashboardController;
 
 Route::get('/login', function () {
     return view('login');
@@ -98,5 +99,6 @@ Route::put('/absensi/{id}', [AbsensiController::class, 'update'])->middleware('a
 Route::get('/admin/search', [SiswaController::class, 'search'])->name('siswa.search');
 
 
+Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
 

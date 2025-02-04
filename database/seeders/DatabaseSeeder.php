@@ -2,12 +2,12 @@
 
 namespace Database\Seeders;
 
-use App\Models\Sekolah;
+use App\Models\Absensi;
 use App\Models\Siswa;
 use App\Models\Status;
 use App\Models\User;
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Carbon;
 
 class DatabaseSeeder extends Seeder
 {
@@ -16,17 +16,13 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
-
+        // Buat User Admin
         User::factory()->create([
             'name' => 'Admin',
             'email' => 'admin@gmail.com',
         ]);
-        Sekolah::create([
-            'nama' => 'SMAN 1 CICURUG',
-            'alamat' => 'CICURUG SUKABUMI',
-            'koordinat' => '-6.798919218710382, 106.77984713684613'
-        ]);
+
+        // Buat Data Siswa
         Siswa::create([
             'nisn' => '24012020',
             'nama' => 'Muhammad Rizqi Suhada',
@@ -35,13 +31,76 @@ class DatabaseSeeder extends Seeder
             'alamat' => 'Jl.Bubat Babet',
             'koordinat' => '-6.7965517,106.7580333'
         ]);
-        Siswa::factory()->count(5)->create();
 
+        // Buat 9 Siswa lainnya
+        Siswa::factory()->count(9)->create();
+
+        // Buat Status Absensi
         Status::create([
             'status' => 'offline',
             'mulai' => '07:00:00',
             'selesai' => '08:00:00',
-
         ]);
+
+        // Buat Absensi untuk Rizqi Suhada (8 hadir, 1 izin, 1 sakit)
+        $siswaRizqi = Siswa::where('nisn', '24012020')->first();
+
+        // Menambahkan absensi hadir (8 kali) dengan koordinat dan timestamp
+        for ($i = 0; $i < 8; $i++) {
+            Absensi::create([
+                'nisn' => $siswaRizqi->nisn,
+                'status' => 'h',  // h = Hadir
+                'koordinat' => $siswaRizqi->koordinat,  // Menambahkan koordinat
+                'created_at' => Carbon::now()->subDays($i),  // Menambahkan timestamp untuk tanggal absensi
+                'updated_at' => Carbon::now()->subDays($i),  // Timestamp update
+            ]);
+        }
+
+        // Menambahkan absensi izin (1 kali) dengan koordinat dan timestamp
+        Absensi::create([
+            'nisn' => $siswaRizqi->nisn,
+            'status' => 'i',  // i = Izin
+            'koordinat' => $siswaRizqi->koordinat,  // Menambahkan koordinat
+            'created_at' => Carbon::now()->subDays(9),  // 1 hari sebelumnya
+            'updated_at' => Carbon::now()->subDays(9),  // Timestamp update
+        ]);
+
+        // Menambahkan absensi sakit (1 kali) dengan koordinat dan timestamp
+        Absensi::create([
+            'nisn' => $siswaRizqi->nisn,
+            'status' => 's',  // s = Sakit
+            'koordinat' => $siswaRizqi->koordinat,  // Menambahkan koordinat
+            'created_at' => Carbon::now()->subDays(10),  // 2 hari sebelumnya
+            'updated_at' => Carbon::now()->subDays(10),  // Timestamp update
+        ]);
+
+        // Buat Absensi dengan tanggal dan status acak untuk 9 Siswa Lainnya
+        $siswas = Siswa::where('nisn', '!=', '24012020')->get();
+
+        foreach ($siswas as $siswa) {
+            // Buat 10 absensi acak untuk siswa lainnya
+            for ($i = 0; $i < 10; $i++) {
+                $status = $this->randomAbsensiStatus();  // Ambil status acak
+                Absensi::create([
+                    'nisn' => $siswa->nisn,
+                    'status' => $status,  // Status acak
+                    'koordinat' => $siswa->koordinat,  // Menambahkan koordinat
+                    'created_at' => Carbon::now()->subDays(rand(1, 30)),  // Tanggal acak antara 1 sampai 30 hari lalu
+                    'updated_at' => Carbon::now()->subDays(rand(1, 30)),  // Timestamp update acak
+                ]);
+            }
+        }
+    }
+
+    /**
+     * Menghasilkan status absensi acak
+     *
+     * @return string
+     */
+    private function randomAbsensiStatus(): string
+    {
+        // Ambil status absensi acak
+        $statuses = ['h', 'i', 's', 'a'];  // h = Hadir, i = Izin, s = Sakit, a = Absen
+        return $statuses[array_rand($statuses)];
     }
 }
