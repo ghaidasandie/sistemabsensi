@@ -124,6 +124,7 @@
             <a href="/dashboard" class="active">Dashboard</a>
             <a href="/admin">Data Siswa</a>
             <a href="/absensi">Data Absensi</a>
+            <a href="/status">Status</a>
         </div>
         <form action="/logout" method="POST">
             @csrf

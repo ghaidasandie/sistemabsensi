@@ -165,6 +165,7 @@
             <a href="/dashboard">Dashboard</a>
             <a href="/admin">Data Siswa</a>
             <a href="/absensi" class="active">Data Absensi</a>
+            <a href="/status">Status</a>
         </div>
         <form action="/logout" method="POST">
             @csrf

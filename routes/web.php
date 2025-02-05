@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Route;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use App\Http\Controllers\AbsensiController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\StatusController;
 
 Route::get('/login', function () {
     return view('login');
@@ -101,4 +102,5 @@ Route::get('/admin/search', [SiswaController::class, 'search'])->name('siswa.sea
 
 Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
-
+Route::get('/status', [StatusController::class, 'index'])->name('status.index');
+Route::put('/status/update/{id}', [StatusController::class, 'updateStatus'])->name('status.update');

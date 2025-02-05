@@ -38,8 +38,8 @@ class DatabaseSeeder extends Seeder
         // Buat Status Absensi
         Status::create([
             'status' => 'offline',
-            'mulai' => '07:00:00',
-            'selesai' => '08:00:00',
+            'mulai' => null,
+            'selesai' => null,
         ]);
 
         // Buat Absensi untuk Rizqi Suhada (8 hadir, 1 izin, 1 sakit)
