@@ -13,7 +13,7 @@ class StatusController extends Controller
     public function index()
     {
         // Panggil autoChangeToOffline untuk memastikan status terbaru
-        $this->autoChangeToOffline();
+        // $this->autoChangeToOffline();
 
         // Ambil status saat ini
         $status = Status::first();
@@ -36,12 +36,12 @@ class StatusController extends Controller
         $status->save();
 
         // Jika status online, tandai siswa yang belum absen sebagai 'alfa'
-        if ($status->status === 'online') {
-            $this->autoMarkAlfa($status->mulai, $status->selesai);
-        }
+        // if ($status->status === 'online') {
+        //     $this->autoMarkAlfa($status->mulai, $status->selesai);
+        // }
 
         // Panggil fungsi untuk cek waktu selesai dan ubah status menjadi offline
-        $this->autoChangeToOffline();
+        // $this->autoChangeToOffline();
 
         return redirect()->back()->with('success', 'Status absensi berhasil diperbarui.');
     }

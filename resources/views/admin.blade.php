@@ -155,7 +155,7 @@
         <div class="menu">
             <h3 class="text-center text-white">Menu</h3>
             <a href="/dashboard">Dashboard</a>
-            <a href="/admin" class="active">Data Siswa</a>
+            <a href="/siswa" class="active">Data Siswa</a>
             <a href="/absensi">Data Absensi</a>
             <a href="/status">Status</a>
         </div>

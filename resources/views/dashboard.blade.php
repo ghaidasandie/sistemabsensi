@@ -122,7 +122,7 @@
         <h3 class="text-center">Menu</h3>
         <div class="menu">
             <a href="/dashboard" class="active">Dashboard</a>
-            <a href="/admin">Data Siswa</a>
+            <a href="/siswa">Data Siswa</a>
             <a href="/absensi">Data Absensi</a>
             <a href="/status">Status</a>
         </div>
@@ -147,6 +147,7 @@
                         <h5 class="card-title">Ranking {{ $index + 1 }}</h5>
                         <h6 class="card-subtitle mb-2">{{ $siswa->nama }}</h6>
                         <p class="card-text"><strong>Total Poin:</strong> {{ $siswa->total_points }} Poin</p>
+                        <p class="card-text"><strong>Total Absensi:</strong> {{ $siswa->total_hadir }} Hadir, {{$siswa->total_izin}} Izin, {{$siswa->total_sakit}} Sakit </p>
                     </div>
                 </div>
             @endforeach
@@ -164,6 +165,7 @@
                         <h5 class="card-title">Ranking {{ $index + 1 }}</h5>
                         <h6 class="card-subtitle mb-2">{{ $siswa->nama }}</h6>
                         <p class="card-text"><strong>Total Poin:</strong> {{ $siswa->total_points }} Poin</p>
+                        <p class="card-text"><strong>Total Absensi:</strong> {{ $siswa->total_hadir }} Hadir, {{$siswa->total_izin}} Izin, {{$siswa->total_sakit}} Sakit </p>
                     </div>
                 </div>
             @endforeach

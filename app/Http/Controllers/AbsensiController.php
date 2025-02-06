@@ -12,14 +12,22 @@ class AbsensiController extends Controller
      * Display a listing of the resource.
      */
     public function index()
-{
-    // Ambil data absensi dengan pagination (10 data per halaman)
-    $absensis = Absensi::paginate(10); // Menggunakan paginate untuk membatasi 10 data per halaman
-    $siswas = Siswa::all(); // Data siswa untuk dropdown NISN
+    {
+        // Ambil data absensi dengan pagination (10 data per halaman)
+        $siswas = Siswa::all(); // Data siswa untuk dropdown NISN
+        $search=request()->query('search');
+        if ($search) {
+            $absensis = Absensi::whereHas('siswa', function ($query) use($search) {
+                $query->where('nama', 'LIKE', '%'.$search.'%');
+            })->paginate(10);
+        } else {
+            $absensis = Absensi::paginate(10);
+        }
 
-    // Kirim data ke view
-    return view('absensi', compact('absensis', 'siswas'));
-}
+
+        // Kirim data ke view
+        return view('absensi', compact('absensis', 'siswas'));
+    }
 
 
     /**
@@ -45,22 +53,22 @@ class AbsensiController extends Controller
      * Update the specified resource in storage.
      */
     public function update(Request $request, $id)
-{
-    // Validasi input untuk status
-    $validated = $request->validate([
-        'status' => 'required|in:a,i,s', // Validasi status yang diizinkan
-    ]);
+    {
+        // Validasi input untuk status
+        $validated = $request->validate([
+            'status' => 'required|in:a,i,s', // Validasi status yang diizinkan
+        ]);
 
-    // Cari absensi berdasarkan ID
-    $absensi = Absensi::findOrFail($id);
+        // Cari absensi berdasarkan ID
+        $absensi = Absensi::findOrFail($id);
 
-    // Hanya update status, tidak menyentuh NISN atau Koordinat
-    $absensi->status = $validated['status'];
-    $absensi->save();
+        // Hanya update status, tidak menyentuh NISN atau Koordinat
+        $absensi->status = $validated['status'];
+        $absensi->save();
 
-    // Redirect setelah update dengan pesan sukses
-    return redirect('/absensi')->with('success', 'Data absensi berhasil diperbarui!');
-}
+        // Redirect setelah update dengan pesan sukses
+        return redirect('/absensi')->with('success', 'Data absensi berhasil diperbarui!');
+    }
 
 
 
