@@ -12,6 +12,6 @@ class Absensi extends Model
     // protected $guarded=['id'];
     protected $fillable = ['nisn', 'status', 'koordinat'];
     public function siswa(){
-        return $this->belongsTo(Siswa::class,'nisn');
+        return $this->belongsTo(Siswa::class,'nisn','nisn');
     }
 }
