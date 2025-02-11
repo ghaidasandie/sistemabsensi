@@ -34,9 +34,6 @@ Route::post('absensi', function(Request $request){
         ]);
         return $absensi;
 })->middleware('auth:sanctum');
-Route::get('tes',function(){
-    dd(Status::first()->updated_at->isSameDay(Carbon::now()));
-});
 Route::post('login', function (Request $request) {
    $nisn = $request->nisn;
    $tanggal_lahir = $request->tanggal_lahir;
