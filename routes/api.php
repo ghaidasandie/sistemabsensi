@@ -6,6 +6,7 @@ use App\Models\Absensi;
 use App\Models\Siswa;
 use App\Models\User;
 use App\Models\Status;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -20,6 +21,9 @@ Route::get('/', function () {
 Route::get('sekolah',[SekolahController::class,'index']);
 Route::get('sekolahbyId',[SekolahController::class,'sekolahbyId']);
 Route::post('absensi', function(Request $request){
+    if(!Status::first()->updated_at->isSameDay(Carbon::now())){
+        return response()->json(['message'=>'bukan waktu absen'],400);
+    };
   $nisn=$request->nisn;
         $status=$request->status;
         $koordinat=$request->koordinat;
@@ -30,6 +34,9 @@ Route::post('absensi', function(Request $request){
         ]);
         return $absensi;
 })->middleware('auth:sanctum');
+Route::get('tes',function(){
+    dd(Status::first()->updated_at->isSameDay(Carbon::now()));
+});
 Route::post('login', function (Request $request) {
    $nisn = $request->nisn;
    $tanggal_lahir = $request->tanggal_lahir;

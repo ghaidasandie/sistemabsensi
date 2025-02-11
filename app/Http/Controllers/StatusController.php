@@ -35,6 +35,7 @@ class StatusController extends Controller
         $status->selesai = $request->selesai;
         $status->save();
 
+
         // Jika status online, tandai siswa yang belum absen sebagai 'alfa'
         // if ($status->status === 'online') {
         //     $this->autoMarkAlfa($status->mulai, $status->selesai);
@@ -44,69 +45,6 @@ class StatusController extends Controller
         // $this->autoChangeToOffline();
 
         return redirect()->back()->with('success', 'Status absensi berhasil diperbarui.');
-    }
-
-    // Fungsi untuk menandai absensi 'alfa' jika waktu selesai sudah lewat
-    private function autoMarkAlfa($mulai, $selesai)
-    {
-        $now = Carbon::now();
-    
-        // Pastikan waktu selesai yang diterima memiliki format yang valid
-        if ($selesai && Carbon::hasFormat($selesai, 'H:i')) {
-            $selesaiTime = Carbon::createFromFormat('H:i', $selesai);
-    
-            // Tandai siswa yang belum absen jika waktu selesai sudah lewat
-            if ($now->greaterThanOrEqualTo($selesaiTime)) {
-                // Cari semua siswa yang belum absen dengan status selain hadir, sakit, izin
-                $siswaBelumAbsen = Siswa::whereDoesntHave('absensis', function ($query) {
-                    $query->whereIn('status', ['h', 's', 'i']); // Status absensi hadir, sakit, izin
-                })->get();
-    
-                // Tandai siswa yang belum absen dengan status 'alfa' saja
-                foreach ($siswaBelumAbsen as $siswa) {
-                    // Cek apakah siswa sudah absen atau belum
-                    $absensi = Absensi::where('nisn', $siswa->nisn)
-                        ->whereIn('status', ['h', 's', 'i']) // Status absensi yang sah
-                        ->whereDate('created_at', Carbon::today()) // Cek untuk hari ini
-                        ->first();
-    
-                    // Jika siswa belum absen, beri status 'alfa'
-                    if (!$absensi) {
-                        Absensi::updateOrCreate(
-                            ['nisn' => $siswa->nisn, 'created_at' => $selesaiTime->toDateString()],
-                            [
-                                'status' => 'a', // 'a' untuk Alfa
-                                'koordinat' => $siswa->koordinat, // Koordinat dari tabel siswa
-                            ]
-                        );
-                    }
-                }
-            }
-        }
-    }
-    
-
-    // Fungsi untuk otomatis mengubah status menjadi 'offline' jika waktu selesai telah lewat
-    private function autoChangeToOffline()
-    {
-        $now = Carbon::now();
-        $status = Status::first();
-
-        if ($status && $status->status === 'online') {
-            if ($status->selesai) {
-                $selesaiTime = Carbon::createFromFormat('H:i', $status->selesai);
-
-                if ($now->greaterThanOrEqualTo($selesaiTime)) {
-                    $status->status = 'offline';
-                    $status->mulai = null;
-                    $status->selesai = null;
-                    $status->save();
-
-                    // Pastikan siswa yang belum absen ditandai sebagai 'alfa'
-                    $this->autoMarkAlfa(null, $selesaiTime->format('H:i'));
-                }
-            }
-        }
     }
 
 
