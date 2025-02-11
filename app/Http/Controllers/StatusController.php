@@ -2,10 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Absensi;
+
 use App\Models\Status;
-use Carbon\Carbon;
-use App\Models\Siswa;
 use Illuminate\Http\Request;
 
 class StatusController extends Controller
@@ -22,6 +20,7 @@ class StatusController extends Controller
 
     public function updateStatus(Request $request)
     {
+
         $request->validate([
             'status' => 'required|in:offline,online',
             'mulai' => 'required_if:status,online|date_format:H:i',
@@ -33,16 +32,9 @@ class StatusController extends Controller
         $status->status = $request->status;
         $status->mulai = $request->mulai;
         $status->selesai = $request->selesai;
+        $status->updated_at = now();
         $status->save();
 
-
-        // Jika status online, tandai siswa yang belum absen sebagai 'alfa'
-        // if ($status->status === 'online') {
-        //     $this->autoMarkAlfa($status->mulai, $status->selesai);
-        // }
-
-        // Panggil fungsi untuk cek waktu selesai dan ubah status menjadi offline
-        // $this->autoChangeToOffline();
 
         return redirect()->back()->with('success', 'Status absensi berhasil diperbarui.');
     }
