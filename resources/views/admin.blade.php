@@ -101,51 +101,43 @@
             padding: 20px;
         }
 
-        .pagination {
-            margin: 0;
-            padding: 0;
-        }
+        /* Pagination Styles */
+.pagination {
+    display: flex;
+    justify-content: center;
+    margin: 20px 0;
+}
 
-        .pagination .page-item {
-            margin: 0 5px;
-        }
+.page-item {
+    margin: 0 2px;
+}
 
-        .pagination .page-link {
-            border-radius: 50px;
-            padding: 8px 16px;
-            font-size: 14px;
-            color: #007bff;
-            background-color: #fff;
-            border: 1px solid #ddd;
-            transition: background-color 0.3s, color 0.3s;
-        }
+.page-link {
+    border-radius: 5px !important;
+    padding: 6px 12px;
+    font-size: 14px;
+    border: 1px solid #dee2e6;
+    color: #007bff;
+    min-width: 38px;
+    text-align: center;
+}
 
-        .pagination .page-link:hover {
-            background-color: #007bff;
-            color: #fff;
-        }
+.page-link:hover {
+    background-color: #e9ecef;
+    color: #0056b3;
+}
 
-        .pagination .page-item.active .page-link {
-            background-color: #007bff;
-            color: white;
-            border-color: #007bff;
-        }
+.page-item.active .page-link {
+    background-color: #007bff;
+    border-color: #007bff;
+    color: white;
+}
 
-        .pagination .page-item.disabled .page-link {
-            color: #6c757d;
-            background-color: #f8f9fa;
-            border-color: #ddd;
-        }
-
-        .pagination .page-item:first-child .page-link {
-            border-top-left-radius: 50px;
-            border-bottom-left-radius: 50px;
-        }
-
-        .pagination .page-item:last-child .page-link {
-            border-top-right-radius: 50px;
-            border-bottom-right-radius: 50px;
-        }
+.page-item.disabled .page-link {
+    color: #6c757d;
+    background-color: #fff;
+    border-color: #dee2e6;
+}
     </style>
 </head>
 
@@ -223,8 +215,6 @@
                             <th>Jenis Kelamin</th>
                             <th>Alamat</th>
                             <th>Koordinat</th>
-                            <th>Tanggal Ditambahkan</th>
-                            <th>Tanggal Diubah</th>
                             <th>Aksi</th>
                         </tr>
                     </thead>
@@ -238,8 +228,6 @@
                                 <td>{{ $siswa->jenis_kelamin == 'l' ? 'Laki-laki' : 'Perempuan' }}</td>
                                 <td>{{ $siswa->alamat }}</td>
                                 <td>{{ $siswa->koordinat }}</td>
-                                <td>{{ $siswa->created_at->format('d M Y') }}</td>
-                                <td>{{ $siswa->updated_at->format('d M Y') }}</td>
                                 <td class="text-center">
                                     <div class="d-flex justify-content-center gap-2">
                                         <button class="btn btn-sm btn-primary" data-bs-toggle="modal"

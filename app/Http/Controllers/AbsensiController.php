@@ -12,23 +12,37 @@ class AbsensiController extends Controller
      * Display a listing of the resource.
      */
     public function index()
-    {
-        // Ambil data absensi dengan pagination (10 data per halaman)
-        $siswas = Siswa::all(); // Data siswa untuk dropdown NISN
-        $search=request()->query('search');
-        if ($search) {
-            $absensis = Absensi::whereHas('siswa', function ($query) use($search) {
-                $query->where('nama', 'LIKE', '%'.$search.'%');
-            })->paginate(10);
-        } else {
-            $absensis = Absensi::paginate(10);
-        }
+{
+    $siswas = Siswa::all(); // Data siswa untuk dropdown NISN
+    $search = request()->query('search');
+    $dateStart = request()->query('date_start');
+    $dateEnd = request()->query('date_end');
 
+    // Ambil tanggal absensi yang unik untuk dropdown
+    $dates = Absensi::selectRaw('DATE(created_at) as date')
+                    ->groupBy('date')
+                    ->orderByDesc('date')
+                    ->pluck('date');
 
-        // Kirim data ke view
-        return view('absensi', compact('absensis', 'siswas'));
+    if ($search || $dateStart || $dateEnd) {
+        $absensis = Absensi::when($search, function ($query) use ($search) {
+                $query->whereHas('siswa', function ($query) use ($search) {
+                    $query->where('nama', 'LIKE', '%'.$search.'%');
+                });
+            })
+            ->when($dateStart, function ($query) use ($dateStart) {
+                $query->whereDate('created_at', '>=', $dateStart);
+            })
+            ->when($dateEnd, function ($query) use ($dateEnd) {
+                $query->whereDate('created_at', '<=', $dateEnd);
+            })
+            ->paginate(10);
+    } else {
+        $absensis = Absensi::paginate(10);
     }
 
+    return view('absensi', compact('absensis', 'siswas', 'dates'));
+}
 
     /**
      * Store a newly created resource in storage.

@@ -109,51 +109,78 @@
             background-color: #f1f1f1;
         }
 
-        /* Styling untuk pagination */
-        .pagination {
-            margin: 20px 0;
-            padding: 0;
-        }
-
-        .pagination .page-item {
-            margin: 0 5px;
-        }
-
-        .pagination .page-link {
-            border-radius: 50px;
+        .btn-success {
             padding: 8px 16px;
             font-size: 14px;
+        }
+
+        /* Mengatur ukuran input pencarian dan tanggal supaya lebih ramping */
+        .form-control {
+            width: auto;
+            display: inline-block;
+            font-size: 14px;
+        }
+
+        /* Menambahkan margin dan spasi yang tepat untuk form pencarian */
+        .form-search {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .form-search input[type="text"],
+        .form-search input[type="date"] {
+            width: 200px;
+            padding: 8px;
+        }
+
+        .form-search button {
+            font-size: 14px;
+            padding: 8px 12px;
+        }
+
+        /* Membuat padding pada form pencarian lebih compact */
+        .d-flex .form-control {
+            margin-right: 10px;
+        }
+
+        /* Styling untuk pagination */
+        /* Pagination Styles */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .page-item {
+            margin: 0 2px;
+        }
+
+        .page-link {
+            border-radius: 5px !important;
+            padding: 6px 12px;
+            font-size: 14px;
+            border: 1px solid #dee2e6;
             color: #007bff;
-            background-color: #fff;
-            border: 1px solid #ddd;
-            transition: background-color 0.3s, color 0.3s;
+            min-width: 38px;
+            text-align: center;
         }
 
-        .pagination .page-link:hover {
-            background-color: #007bff;
-            color: #fff;
+        .page-link:hover {
+            background-color: #e9ecef;
+            color: #0056b3;
         }
 
-        .pagination .page-item.active .page-link {
+        .page-item.active .page-link {
             background-color: #007bff;
-            color: white;
             border-color: #007bff;
+            color: white;
         }
 
-        .pagination .page-item.disabled .page-link {
+        .page-item.disabled .page-link {
             color: #6c757d;
-            background-color: #f8f9fa;
-            border-color: #ddd;
-        }
-
-        .pagination .page-item:first-child .page-link {
-            border-top-left-radius: 50px;
-            border-bottom-left-radius: 50px;
-        }
-
-        .pagination .page-item:last-child .page-link {
-            border-top-right-radius: 50px;
-            border-bottom-right-radius: 50px;
+            background-color: #fff;
+            border-color: #dee2e6;
         }
     </style>
 </head>
@@ -178,15 +205,29 @@
     <div class="content">
         <div class="container mt-3">
             <h1 class="text-center mb-4">Daftar Absensi</h1>
+            <div class="d-flex justify-content-between mb-3">
+                <!-- Button Tambah Data Absensi -->
+                <button class="btn btn-success mb-1" data-bs-toggle="modal" data-bs-target="#tambahAbsensiModal">+
+                    Tambah
+                    Data Absensi</button>
+                <form action="/absensi" method="GET" class="d-flex gap-2">
+                    <input type="text" name="search" class="form-control" placeholder="Cari..."
+                        value="{{ request()->get('search') }}">
+                    <div>
+                        <label for="date_start" class="form-label"></label>
+                        <input type="date" name="date_start" id="date_start" class="form-control"
+                            value="{{ request()->get('date_start') }}">
+                    </div>
+                    <div>
+                        <label for="date_end" class="form-label"></label>
+                        <input type="date" name="date_end" id="date_end" class="form-control"
+                            value="{{ request()->get('date_end') }}">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Filter</button>
+                </form>
 
-            <!-- Button Tambah Data Absensi -->
-            <button class="btn btn-success mb-3" data-bs-toggle="modal" data-bs-target="#tambahAbsensiModal">+ Tambah
-                Data Absensi</button>
-            <form action="/absensi" method="GET" class="d-flex w-50">
-                <input type="text" name="search" class="form-control" placeholder="Cari berdasarkan nama atau NISN"
-                    value="{{ request()->get('search') }}">
-                <button type="submit" class="btn btn-primary ms-2">Cari</button>
-            </form>
+
+            </div>
             <!-- Tabel Absensi -->
             <div class="table-responsive">
                 <table class="table table-bordered table-hover">
@@ -238,42 +279,45 @@
                 </table>
             </div>
             <!-- Pagination -->
-            <div class="d-flex justify-content-center mt-3">
-                <nav aria-label="Page navigation">
-                    <ul class="pagination">
-                        <!-- Previous Page Link -->
-                        @if ($absensis->onFirstPage())
-                            <li class="page-item disabled">
-                                <span class="page-link">Previous</span>
-                            </li>
-                        @else
-                            <li class="page-item">
-                                <a class="page-link" href="{{ $absensis->previousPageUrl() }}"
-                                    aria-label="Previous">Previous</a>
-                            </li>
-                        @endif
+                <div class="d-flex justify-content-center mt-3">
+                    <nav aria-label="Page navigation">
+                        <ul class="pagination">
+                            <!-- Previous Page Link -->
+                            @if ($absensis->onFirstPage())
+                                <li class="page-item disabled">
+                                    <span class="page-link">Previous</span>
+                                </li>
+                            @else
+                                <li class="page-item">
+                                    <a class="page-link"
+                                        href="{{ $absensis->previousPageUrl() }}&search={{ request()->get('search') }}&date_start={{ request()->get('date_start') }}&date_end={{ request()->get('date_end') }}"
+                                        aria-label="Previous">Previous</a>
+                                </li>
+                            @endif
 
-                        <!-- Page Number Links -->
-                        @foreach ($absensis->getUrlRange(1, $absensis->lastPage()) as $page => $url)
-                            <li class="page-item {{ $absensis->currentPage() == $page ? 'active' : '' }}">
-                                <a class="page-link" href="{{ $url }}">{{ $page }}</a>
-                            </li>
-                        @endforeach
+                            <!-- Page Number Links -->
+                            @foreach ($absensis->getUrlRange(1, $absensis->lastPage()) as $page => $url)
+                                <li class="page-item {{ $absensis->currentPage() == $page ? 'active' : '' }}">
+                                    <a class="page-link"
+                                        href="{{ $url }}&search={{ request()->get('search') }}&date_start={{ request()->get('date_start') }}&date_end={{ request()->get('date_end') }}">{{ $page }}</a>
+                                </li>
+                            @endforeach
 
-                        <!-- Next Page Link -->
-                        @if ($absensis->hasMorePages())
-                            <li class="page-item">
-                                <a class="page-link" href="{{ $absensis->nextPageUrl() }}" aria-label="Next">Next</a>
-                            </li>
-                        @else
-                            <li class="page-item disabled">
-                                <span class="page-link">Next</span>
-                            </li>
-                        @endif
-                    </ul>
-                </nav>
-            </div>
-
+                            <!-- Next Page Link -->
+                            @if ($absensis->hasMorePages())
+                                <li class="page-item">
+                                    <a class="page-link"
+                                        href="{{ $absensis->nextPageUrl() }}&search={{ request()->get('search') }}&date_start={{ request()->get('date_start') }}&date_end={{ request()->get('date_end') }}"
+                                        aria-label="Next">Next</a>
+                                </li>
+                            @else
+                                <li class="page-item disabled">
+                                    <span class="page-link">Next</span>
+                                </li>
+                            @endif
+                        </ul>
+                    </nav>
+                </div>
         </div>
     </div>
 
@@ -286,7 +330,8 @@
                     @csrf
                     <div class="modal-header">
                         <h5 class="modal-title" id="tambahAbsensiModalLabel">Tambah Data Absensi</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                            aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
                         <div class="mb-3">
