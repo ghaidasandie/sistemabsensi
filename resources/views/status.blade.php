@@ -119,6 +119,7 @@
             <a href="/siswa">Data Siswa</a>
             <a href="/absensi">Data Absensi</a>
             <a href="/status" class="active">Status</a>
+            <a href="/laporan">Laporan</a>
         </div>
         <form action="/logout" method="POST">
             @csrf

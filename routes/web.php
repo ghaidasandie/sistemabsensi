@@ -11,6 +11,7 @@ use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use App\Http\Controllers\AbsensiController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\StatusController;
+use App\Http\Controllers\LaporanController;
 
 Route::get('/login', function () {
     return view('login');
@@ -104,3 +105,6 @@ Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard
 
 Route::get('/status', [StatusController::class, 'index'])->name('status.index');
 Route::put('/status/update/{id}', [StatusController::class, 'updateStatus'])->name('status.update');
+
+Route::get('/laporan', [LaporanController::class, 'index'])->name('laporan');
+Route::get('/laporan/export', [LaporanController::class, 'export'])->name('laporan.export');

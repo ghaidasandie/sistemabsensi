@@ -102,7 +102,7 @@
 
         .table-bordered td,
         .table-bordered th {
-            border: 1px solid #ddd;/
+            border: 1px solid #ddd;
         }
 
         .table-hover tbody tr:hover {
@@ -194,6 +194,7 @@
             <a href="/siswa">Data Siswa</a>
             <a href="/absensi" class="active">Data Absensi</a>
             <a href="/status">Status</a>
+            <a href="/laporan">Laporan</a>
         </div>
         <form action="/logout" method="POST">
             @csrf
@@ -224,6 +225,8 @@
                             value="{{ request()->get('date_end') }}">
                     </div>
                     <button type="submit" class="btn btn-primary">Filter</button>
+                    <a href="/absensi" class="btn btn-secondary">Reset</a>
+
                 </form>
 
 
