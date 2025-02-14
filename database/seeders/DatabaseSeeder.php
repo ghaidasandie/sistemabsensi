@@ -42,11 +42,11 @@ class DatabaseSeeder extends Seeder
             'selesai' => null,
         ]);
 
-        // Buat Absensi untuk Rizqi Suhada (8 hadir, 1 izin, 1 sakit)
+        // Buat Absensi untuk Rizqi Suhada (12 hadir, 1 izin, 1 sakit)
         $siswaRizqi = Siswa::where('nisn', '24012020')->first();
 
-        // Menambahkan absensi hadir (8 kali) dengan koordinat dan timestamp
-        for ($i = 0; $i < 8; $i++) {
+        // Menambahkan absensi hadir (12 kali) dengan koordinat dan timestamp
+        for ($i = 0; $i < 12; $i++) {
             Absensi::create([
                 'nisn' => $siswaRizqi->nisn,
                 'status' => 'h',  // h = Hadir
@@ -79,7 +79,7 @@ class DatabaseSeeder extends Seeder
 
         foreach ($siswas as $siswa) {
             // Buat 10 absensi acak untuk siswa lainnya
-            for ($i = 0; $i < 10; $i++) {
+            for ($i = 0; $i < 14; $i++) {
                 $status = $this->randomAbsensiStatus();  // Ambil status acak
                 Absensi::create([
                     'nisn' => $siswa->nisn,

@@ -282,45 +282,75 @@
                 </table>
             </div>
             <!-- Pagination -->
-                <div class="d-flex justify-content-center mt-3">
-                    <nav aria-label="Page navigation">
-                        <ul class="pagination">
-                            <!-- Previous Page Link -->
-                            @if ($absensis->onFirstPage())
-                                <li class="page-item disabled">
-                                    <span class="page-link">Previous</span>
+            <div class="d-flex justify-content-center mt-3">
+                <nav aria-label="Page navigation">
+                    <ul class="pagination">
+                        <!-- Tombol Previous -->
+                        @if ($absensis->onFirstPage())
+                            <li class="page-item disabled">
+                                <span class="page-link">Previous</span>
+                            </li>
+                        @else
+                            <li class="page-item">
+                                <a class="page-link" href="{{ $absensis->previousPageUrl() }}">Previous</a>
+                            </li>
+                        @endif
+
+                        <!-- Nomor Halaman -->
+                        @php
+                            $totalPages = $absensis->lastPage();
+                            $currentPage = $absensis->currentPage();
+                        @endphp
+
+                        @if ($totalPages <= 5)
+                            @for ($page = 1; $page <= $totalPages; $page++)
+                                <li class="page-item {{ $currentPage == $page ? 'active' : '' }}">
+                                    <a class="page-link" href="{{ $absensis->url($page) }}">{{ $page }}</a>
                                 </li>
-                            @else
-                                <li class="page-item">
-                                    <a class="page-link"
-                                        href="{{ $absensis->previousPageUrl() }}&search={{ request()->get('search') }}&date_start={{ request()->get('date_start') }}&date_end={{ request()->get('date_end') }}"
-                                        aria-label="Previous">Previous</a>
-                                </li>
+                            @endfor
+                        @else
+                            <!-- Tampilkan Halaman Pertama -->
+                            <li class="page-item {{ $currentPage == 1 ? 'active' : '' }}">
+                                <a class="page-link" href="{{ $absensis->url(1) }}">1</a>
+                            </li>
+
+                            <!-- Tambahkan ... jika halaman saat ini lebih dari 3 -->
+                            @if ($currentPage > 3)
+                                <li class="page-item disabled"><span class="page-link">...</span></li>
                             @endif
 
-                            <!-- Page Number Links -->
-                            @foreach ($absensis->getUrlRange(1, $absensis->lastPage()) as $page => $url)
-                                <li class="page-item {{ $absensis->currentPage() == $page ? 'active' : '' }}">
-                                    <a class="page-link"
-                                        href="{{ $url }}&search={{ request()->get('search') }}&date_start={{ request()->get('date_start') }}&date_end={{ request()->get('date_end') }}">{{ $page }}</a>
+                            <!-- Tampilkan 2 halaman sebelum & sesudah halaman aktif -->
+                            @for ($page = max(2, $currentPage - 1); $page <= min($totalPages - 1, $currentPage + 1); $page++)
+                                <li class="page-item {{ $currentPage == $page ? 'active' : '' }}">
+                                    <a class="page-link" href="{{ $absensis->url($page) }}">{{ $page }}</a>
                                 </li>
-                            @endforeach
+                            @endfor
 
-                            <!-- Next Page Link -->
-                            @if ($absensis->hasMorePages())
-                                <li class="page-item">
-                                    <a class="page-link"
-                                        href="{{ $absensis->nextPageUrl() }}&search={{ request()->get('search') }}&date_start={{ request()->get('date_start') }}&date_end={{ request()->get('date_end') }}"
-                                        aria-label="Next">Next</a>
-                                </li>
-                            @else
-                                <li class="page-item disabled">
-                                    <span class="page-link">Next</span>
-                                </li>
+                            <!-- Tambahkan ... jika halaman aktif kurang dari total - 2 -->
+                            @if ($currentPage < $totalPages - 2)
+                                <li class="page-item disabled"><span class="page-link">...</span></li>
                             @endif
-                        </ul>
-                    </nav>
-                </div>
+
+                            <!-- Tampilkan Halaman Terakhir -->
+                            <li class="page-item {{ $currentPage == $totalPages ? 'active' : '' }}">
+                                <a class="page-link" href="{{ $absensis->url($totalPages) }}">{{ $totalPages }}</a>
+                            </li>
+                        @endif
+
+                        <!-- Tombol Next -->
+                        @if ($absensis->hasMorePages())
+                            <li class="page-item">
+                                <a class="page-link" href="{{ $absensis->nextPageUrl() }}">Next</a>
+                            </li>
+                        @else
+                            <li class="page-item disabled">
+                                <span class="page-link">Next</span>
+                            </li>
+                        @endif
+                    </ul>
+                </nav>
+            </div>
+
         </div>
     </div>
 

@@ -159,93 +159,130 @@
             <h1 class="text-center mb-4">Laporan Absensi</h1>
 
             <!-- Form untuk memilih rentang tanggal -->
-        <div class="d-flex justify-content-between mb-3">
-            <form action="/laporan" method="GET" class="d-flex gap-2">
-                <div>
-                    <input type="date" name="date_start" class="form-control" value="{{ request()->get('date_start', now()->startOfMonth()->toDateString()) }}">
-                </div>
-                <div>
-                    <input type="date" name="date_end" class="form-control" value="{{ request()->get('date_end', now()->toDateString()) }}">
-                </div>
-                <button type="submit" class="btn btn-primary">Tampilkan</button>
-            </form>
-            <form action="{{ route('laporan.export') }}" method="GET" class="d-flex gap-2">
-                <input type="hidden" name="date_start" value="{{ request()->get('date_start', now()->startOfMonth()->toDateString()) }}">
-                <input type="hidden" name="date_end" value="{{ request()->get('date_end', now()->toDateString()) }}">
-                <button type="submit" class="btn btn-success">Download PDF</button>
-            </form>
-        </div>
+            <div class="d-flex justify-content-between mb-3">
+                <form action="/laporan" method="GET" class="d-flex gap-2">
+                    <div>
+                        <input type="date" name="date_start" class="form-control"
+                            value="{{ request()->get('date_start', now()->startOfMonth()->toDateString()) }}">
+                    </div>
+                    <div>
+                        <input type="date" name="date_end" class="form-control"
+                            value="{{ request()->get('date_end', now()->toDateString()) }}">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Tampilkan</button>
+                </form>
+                <form action="{{ route('laporan.export') }}" method="GET" class="d-flex gap-2">
+                    <input type="hidden" name="date_start"
+                        value="{{ request()->get('date_start', now()->startOfMonth()->toDateString()) }}">
+                    <input type="hidden" name="date_end"
+                        value="{{ request()->get('date_end', now()->toDateString()) }}">
+                    <button type="submit" class="btn btn-success">Download PDF</button>
+                </form>
+            </div>
 
-        <p>Periode: {{ \Carbon\Carbon::parse($dateStart)->format('d M Y') }} sampai {{ \Carbon\Carbon::parse($dateEnd)->format('d M Y') }}</p>
+            <p>Periode: {{ \Carbon\Carbon::parse($dateStart)->format('d M Y') }} sampai
+                {{ \Carbon\Carbon::parse($dateEnd)->format('d M Y') }}</p>
 
-        <!-- Tabel Absensi -->
-        <div class="table-responsive">
-            <table class="table table-bordered">
-                <thead>
-                    <tr>
-                        <th>No</th>
-                        <th>NISN</th>
-                        <th>Nama</th>
-                        <th>Status</th>
-                        <th>Koordinat</th>
-                        <th>Tanggal Absen</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach ($absensis as $absensi)
-                    <tr>
-                        <td>{{ $loop->iteration }}</td>
-                        <td>{{ $absensi->nisn }}</td>
-                        <td>{{ $absensi->siswa->nama }}</td>
-                        <td>{{ $absensi->status }}</td>
-                        <td>{{ $absensi->koordinat }}</td>
-                        <td>{{ $absensi->created_at->format('d M Y') }}</td>
-                    </tr>
-                    @endforeach
-                </tbody>
-            </table>
+            <!-- Tabel Absensi -->
+            <div class="table-responsive">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>No</th>
+                            <th>NISN</th>
+                            <th>Nama</th>
+                            <th>Status</th>
+                            <th>Koordinat</th>
+                            <th>Tanggal Absen</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($absensis as $absensi)
+                            <tr>
+                                <td>{{ $loop->iteration }}</td>
+                                <td>{{ $absensi->nisn }}</td>
+                                <td>{{ $absensi->siswa->nama }}</td>
+                                <td>{{ $absensi->status }}</td>
+                                <td>{{ $absensi->koordinat }}</td>
+                                <td>{{ $absensi->created_at->format('d M Y') }}</td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
 
             </div>
 
-           <!-- Pagination -->
-<div class="d-flex justify-content-center mt-3">
-    <nav aria-label="Page navigation">
-        <ul class="pagination">
-            <!-- Cek apakah $absensis adalah objek pagination -->
-            @if ($absensis instanceof \Illuminate\Pagination\LengthAwarePaginator)
-                <!-- Pagination hanya ditampilkan jika $absensis merupakan hasil query paginasi -->
-                @if ($absensis->onFirstPage())
-                    <li class="page-item disabled">
-                        <span class="page-link">Previous</span>
-                    </li>
-                @else
-                    <li class="page-item">
-                        <a class="page-link" href="{{ $absensis->previousPageUrl() }}" aria-label="Previous">Previous</a>
-                    </li>
-                @endif
+            <!-- Pagination -->
+            <div class="d-flex justify-content-center mt-3">
+                <nav aria-label="Page navigation">
+                    <ul class="pagination">
+                        <!-- Tombol Previous -->
+                        @if ($absensis->onFirstPage())
+                            <li class="page-item disabled">
+                                <span class="page-link">Previous</span>
+                            </li>
+                        @else
+                            <li class="page-item">
+                                <a class="page-link" href="{{ $absensis->previousPageUrl() }}">Previous</a>
+                            </li>
+                        @endif
 
-                @foreach ($absensis->getUrlRange(1, $absensis->lastPage()) as $page => $url)
-                    <li class="page-item{{ $absensis->currentPage() == $page ? ' active' : '' }}">
-                        <a class="page-link" href="{{ $url }}">{{ $page }}</a>
-                    </li>
-                @endforeach
+                        <!-- Nomor Halaman -->
+                        @php
+                            $totalPages = $absensis->lastPage();
+                            $currentPage = $absensis->currentPage();
+                        @endphp
 
-                @if ($absensis->hasMorePages())
-                    <li class="page-item">
-                        <a class="page-link" href="{{ $absensis->nextPageUrl() }}" aria-label="Next">Next</a>
-                    </li>
-                @else
-                    <li class="page-item disabled">
-                        <span class="page-link">Next</span>
-                    </li>
-                @endif
-            @else
-                <!-- Jika tidak ada pagination, tidak menampilkan navigasi halaman -->
-                <span class="page-link">No pagination available</span>
-            @endif
-        </ul>
-    </nav>
-</div>
+                        @if ($totalPages <= 5)
+                            <!-- Jika total halaman <= 5, tampilkan semua halaman -->
+                            @for ($page = 1; $page <= $totalPages; $page++)
+                                <li class="page-item {{ $currentPage == $page ? 'active' : '' }}">
+                                    <a class="page-link" href="{{ $absensis->url($page) }}">{{ $page }}</a>
+                                </li>
+                            @endfor
+                        @else
+                            <!-- Tampilkan Halaman Pertama -->
+                            <li class="page-item {{ $currentPage == 1 ? 'active' : '' }}">
+                                <a class="page-link" href="{{ $absensis->url(1) }}">1</a>
+                            </li>
+
+                            <!-- Tambahkan ... jika halaman saat ini lebih dari 3 -->
+                            @if ($currentPage > 3)
+                                <li class="page-item disabled"><span class="page-link">...</span></li>
+                            @endif
+
+                            <!-- Tampilkan 2 halaman sebelum & sesudah halaman aktif -->
+                            @for ($page = max(2, $currentPage - 1); $page <= min($totalPages - 1, $currentPage + 1); $page++)
+                                <li class="page-item {{ $currentPage == $page ? 'active' : '' }}">
+                                    <a class="page-link" href="{{ $absensis->url($page) }}">{{ $page }}</a>
+                                </li>
+                            @endfor
+
+                            <!-- Tambahkan ... jika halaman aktif kurang dari total - 2 -->
+                            @if ($currentPage < $totalPages - 2)
+                                <li class="page-item disabled"><span class="page-link">...</span></li>
+                            @endif
+
+                            <!-- Tampilkan Halaman Terakhir -->
+                            <li class="page-item {{ $currentPage == $totalPages ? 'active' : '' }}">
+                                <a class="page-link" href="{{ $absensis->url($totalPages) }}">{{ $totalPages }}</a>
+                            </li>
+                        @endif
+
+                        <!-- Tombol Next -->
+                        @if ($absensis->hasMorePages())
+                            <li class="page-item">
+                                <a class="page-link" href="{{ $absensis->nextPageUrl() }}">Next</a>
+                            </li>
+                        @else
+                            <li class="page-item disabled">
+                                <span class="page-link">Next</span>
+                            </li>
+                        @endif
+                    </ul>
+                </nav>
+            </div>
+
 
 </body>
 

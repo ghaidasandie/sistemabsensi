@@ -102,42 +102,42 @@
         }
 
         /* Pagination Styles */
-.pagination {
-    display: flex;
-    justify-content: center;
-    margin: 20px 0;
-}
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+        }
 
-.page-item {
-    margin: 0 2px;
-}
+        .page-item {
+            margin: 0 2px;
+        }
 
-.page-link {
-    border-radius: 5px !important;
-    padding: 6px 12px;
-    font-size: 14px;
-    border: 1px solid #dee2e6;
-    color: #007bff;
-    min-width: 38px;
-    text-align: center;
-}
+        .page-link {
+            border-radius: 5px !important;
+            padding: 6px 12px;
+            font-size: 14px;
+            border: 1px solid #dee2e6;
+            color: #007bff;
+            min-width: 38px;
+            text-align: center;
+        }
 
-.page-link:hover {
-    background-color: #e9ecef;
-    color: #0056b3;
-}
+        .page-link:hover {
+            background-color: #e9ecef;
+            color: #0056b3;
+        }
 
-.page-item.active .page-link {
-    background-color: #007bff;
-    border-color: #007bff;
-    color: white;
-}
+        .page-item.active .page-link {
+            background-color: #007bff;
+            border-color: #007bff;
+            color: white;
+        }
 
-.page-item.disabled .page-link {
-    color: #6c757d;
-    background-color: #fff;
-    border-color: #dee2e6;
-}
+        .page-item.disabled .page-link {
+            color: #6c757d;
+            background-color: #fff;
+            border-color: #dee2e6;
+        }
     </style>
 </head>
 
@@ -339,6 +339,7 @@
             @endforeach
 
             <!-- Pagination -->
+            <!-- Pagination -->
             <div class="d-flex justify-content-center mt-3">
                 <nav aria-label="Page navigation">
                     <ul class="pagination">
@@ -355,11 +356,46 @@
                         @endif
 
                         <!-- Page Number Links -->
-                        @foreach ($siswas->getUrlRange(1, $siswas->lastPage()) as $page => $url)
-                            <li class="page-item {{ $siswas->currentPage() == $page ? 'active' : '' }}">
-                                <a class="page-link" href="{{ $url }}">{{ $page }}</a>
+                        @php
+                            $totalPages = $siswas->lastPage();
+                            $currentPage = $siswas->currentPage();
+                        @endphp
+
+                        @if ($totalPages <= 5)
+                            <!-- Jika total halaman <= 5, tampilkan semua halaman -->
+                            @for ($page = 1; $page <= $totalPages; $page++)
+                                <li class="page-item {{ $currentPage == $page ? 'active' : '' }}">
+                                    <a class="page-link" href="{{ $siswas->url($page) }}">{{ $page }}</a>
+                                </li>
+                            @endfor
+                        @else
+                            <!-- Tampilkan Halaman Pertama -->
+                            <li class="page-item {{ $currentPage == 1 ? 'active' : '' }}">
+                                <a class="page-link" href="{{ $siswas->url(1) }}">1</a>
                             </li>
-                        @endforeach
+
+                            <!-- Tambahkan ... jika halaman saat ini lebih dari 3 -->
+                            @if ($currentPage > 3)
+                                <li class="page-item disabled"><span class="page-link">...</span></li>
+                            @endif
+
+                            <!-- Tampilkan 2 halaman sebelum & sesudah halaman aktif -->
+                            @for ($page = max(2, $currentPage - 1); $page <= min($totalPages - 1, $currentPage + 1); $page++)
+                                <li class="page-item {{ $currentPage == $page ? 'active' : '' }}">
+                                    <a class="page-link" href="{{ $siswas->url($page) }}">{{ $page }}</a>
+                                </li>
+                            @endfor
+
+                            <!-- Tambahkan ... jika halaman aktif kurang dari total - 2 -->
+                            @if ($currentPage < $totalPages - 2)
+                                <li class="page-item disabled"><span class="page-link">...</span></li>
+                            @endif
+
+                            <!-- Tampilkan Halaman Terakhir -->
+                            <li class="page-item {{ $currentPage == $totalPages ? 'active' : '' }}">
+                                <a class="page-link" href="{{ $siswas->url($totalPages) }}">{{ $totalPages }}</a>
+                            </li>
+                        @endif
 
                         <!-- Next Page Link -->
                         @if ($siswas->hasMorePages())
@@ -374,6 +410,8 @@
                     </ul>
                 </nav>
             </div>
+
+
 
             <!-- Add Data Modal -->
             <div class="modal fade" id="tambahSiswaModal" tabindex="-1" aria-labelledby="tambahSiswaModalLabel"
