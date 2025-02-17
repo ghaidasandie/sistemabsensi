@@ -32,9 +32,10 @@ return [
     |
     */
 
-    'lifetime' => env('SESSION_LIFETIME', 120),
-
-    'expire_on_close' => env('SESSION_EXPIRE_ON_CLOSE', false),
+'driver' => env('SESSION_DRIVER', 'file'),
+    'lifetime' => 120, // Durasi waktu sesi (dalam menit), setelah itu sesi akan kedaluwarsa.
+    'expire_on_close' => true, // Setiap kali browser ditutup, sesi akan habis.
+    'encrypt' => true, // Enkripsi data sesi untuk keamanan.
 
     /*
     |--------------------------------------------------------------------------

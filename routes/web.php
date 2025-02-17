@@ -1,110 +1,81 @@
 <?php
 
+use App\Http\Controllers\AbsensiController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\LaporanController;
 use App\Http\Controllers\SiswaController;
-use App\Models\Absensi;
+use App\Http\Controllers\StatusController;
 use App\Models\Siswa;
-use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
-use SimpleSoftwareIO\QrCode\Facades\QrCode;
-use App\Http\Controllers\AbsensiController;
-use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\StatusController;
-use App\Http\Controllers\LaporanController;
 
+// Route untuk halaman login
 Route::get('/login', function () {
     return view('login');
 })->middleware('guest')->name('login');
 
+// Route untuk proses login dengan validasi
+// Route untuk halaman login
+Route::get('/login', function () {
+    return view('login');
+})->middleware('guest')->name('login');
+
+// Route untuk proses login dengan validasi
 Route::post('/login', function (Request $request) {
-    $email = $request->email;
-    $password = $request->password;
-    $credential = [
-        'email' => $email,
-        'password' => $password
-    ];
-    Auth::attempt($credential);
-    return redirect('/dashboard');
-});
+    $credentials = $request->only('email', 'password');
 
-Route::get('/admin', function () {
-    $siswas = Siswa::paginate(5);
-    return view('admin', ['siswas' => $siswas]);
-})->middleware('auth');
+    if (Auth::attempt($credentials)) {
+        return redirect()->route('dashboard'); // Redirect ke dashboard setelah login berhasil
+    }
 
+    return back()->withErrors(['email' => 'Email atau password salah'])->withInput();
+})->name('login.process');
+
+
+// Middleware auth untuk rute yang hanya bisa diakses oleh user yang login
+Route::middleware('auth')->group(function () {
+
+// Route untuk logout
 Route::post('/logout', function () {
     Auth::logout();
-    return redirect('/login');
-})->withoutMiddleware(
-    VerifyCsrfToken::class
-)->middleware('auth');
+    return redirect()->route('login');  // Arahkan ke halaman login setelah logout
+})->middleware('auth')->name('logout');
 
-Route::post('/siswa', function (Request $request) {
-    $nisn = $request->nisn;
-    $nama = $request->nama;
-    $jenis_kelamin = $request->jenis_kelamin;
-    $alamat = $request->alamat;
-    $koordinat = $request->koordinat;
+// Rute utama jika belum login (akan mengarah ke login)
+Route::get('/', function () {
+    return redirect()->route('login'); // Jika belum login, arahkan ke login
+});
 
-    Siswa::create(
-        [
-            'nisn' => $nisn,
-            'nama' => $nama,
-            'jenis_kelamin' => $jenis_kelamin,
-            'alamat' => $alamat,
-            'koordinat' => $koordinat
-        ]
-    );
-    return redirect('/admin');
-})->middleware('auth');
+    // Dashboard
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
-//** */ Route Absensi
-Route::get('/absensi', function () {
-    $absensis = Absensi::all();
-    $siswas = Siswa::all(); // Mengambil data siswa untuk dropdown NISN
-    return view('absensi', ['absensis' => $absensis, 'siswas' => $siswas]);
-})->middleware('auth');
+    // Manajemen Siswa
+    Route::resource('siswa', SiswaController::class);
+    Route::get('/admin/search', [SiswaController::class, 'search'])->name('siswa.search');
 
-// Menyimpan Absensi menggunakan Route::resource yang otomatis sudah ada
-Route::resource('absensi', AbsensiController::class)->middleware('auth');
+    // Manajemen Absensi
+    Route::resource('absensi', AbsensiController::class);
 
-/// Rute untuk update absensi (metode PUT)
-Route::put('/absensi/{id}', [AbsensiController::class, 'update'])->name('absensi.update');
+    // Status
+    Route::get('/status', [StatusController::class, 'index'])->name('status.index');
+    Route::put('/status/update/{id}', [StatusController::class, 'updateStatus'])->name('status.update');
 
+    // Laporan
+    Route::get('/laporan', [LaporanController::class, 'index'])->name('laporan');
+    Route::get('/laporan/export', [LaporanController::class, 'export'])->name('laporan.export');
 
+    // Admin Panel
+    Route::get('/admin', function () {
+        $siswas = Siswa::paginate(5);
+        return view('admin', ['siswas' => $siswas]);
+    })->name('admin');
 
-Route::get('/dashboard', function () {
-    $siswas = Siswa::all();
-    return view('dashboard', ['siswas' => $siswas]);
-})->middleware('auth');
+    // Halaman home setelah login
+    Route::middleware('auth')->get('/qr', function () {
+        // Hanya yang sudah login yang bisa mengakses halaman ini
+        $token = Auth::user()->createToken('absensi')->plainTextToken;
+        return view('home', ['token' => $token]);
+    })->name('home');
 
-
-Route::get('/', function (Request $request) {
-    //Generate sanctum token
-    $token = auth()->user()->createToken('absensi')->plainTextToken;
-    return view('home',['token'=>$token]);
-})->middleware('auth');
-
-Route::get('/absensi', function () {
-    $absensis = Absensi::all();
-    return view('absensi', ['absensis' => $absensis]);
-})->middleware('auth');
-
-Route::resource('siswa', SiswaController::class);
-Route::put('/siswa/{id}', [SiswaController::class, 'update'])->name('siswa.update');
-Route::put('/siswa/{id}', [SiswaController::class, 'update'])->middleware('auth')->name('siswa.update');
-
-Route::resource('absensi', AbsensiController::class);
-Route::put('/absensi/{id}', [AbsensiController::class, 'update'])->name('absensi.update');
-Route::put('/absensi/{id}', [AbsensiController::class, 'update'])->middleware('auth')->name('absensi.update');
-Route::get('/admin/search', [SiswaController::class, 'search'])->name('siswa.search');
-
-
-Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-
-Route::get('/status', [StatusController::class, 'index'])->name('status.index');
-Route::put('/status/update/{id}', [StatusController::class, 'updateStatus'])->name('status.update');
-
-Route::get('/laporan', [LaporanController::class, 'index'])->name('laporan');
-Route::get('/laporan/export', [LaporanController::class, 'export'])->name('laporan.export');
+});

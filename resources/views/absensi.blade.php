@@ -211,23 +211,23 @@
                 <button class="btn btn-success mb-1" data-bs-toggle="modal" data-bs-target="#tambahAbsensiModal">+
                     Tambah
                     Data Absensi</button>
-                <form action="/absensi" method="GET" class="d-flex gap-2">
-                    <input type="text" name="search" class="form-control" placeholder="Cari..."
-                        value="{{ request()->get('search') }}">
-                    <div>
-                        <label for="date_start" class="form-label"></label>
-                        <input type="date" name="date_start" id="date_start" class="form-control"
-                            value="{{ request()->get('date_start') }}">
-                    </div>
-                    <div>
-                        <label for="date_end" class="form-label"></label>
-                        <input type="date" name="date_end" id="date_end" class="form-control"
-                            value="{{ request()->get('date_end') }}">
-                    </div>
-                    <button type="submit" class="btn btn-primary">Filter</button>
-                    <a href="/absensi" class="btn btn-secondary">Reset</a>
+                    <form action="/absensi" method="GET" class="d-flex gap-2">
+                        <input type="text" name="search" class="form-control" placeholder="Cari..."
+                            value="{{ request()->get('search') }}">
+                        <div>
+                            <label for="date_start" class="form-label"></label>
+                            <input type="date" name="date_start" id="date_start" class="form-control"
+                                value="{{ request()->get('date_start') }}">
+                        </div>
+                        <div>
+                            <label for="date_end" class="form-label"></label>
+                            <input type="date" name="date_end" id="date_end" class="form-control"
+                                value="{{ request()->get('date_end') }}">
+                        </div>
+                        <button type="submit" class="btn btn-primary">Filter</button>
+                        <a href="/absensi" class="btn btn-secondary">Reset</a>
+                    </form>
 
-                </form>
 
 
             </div>

@@ -36,13 +36,18 @@ class AbsensiController extends Controller
             ->when($dateEnd, function ($query) use ($dateEnd) {
                 $query->whereDate('created_at', '<=', $dateEnd);
             })
+            // Urutkan berdasarkan tanggal setelah filter diterapkan
+            ->orderBy('created_at', 'desc') // Urutkan berdasarkan tanggal terbaru
             ->paginate(10);
     } else {
-        $absensis = Absensi::paginate(10);
+        // Jika tidak ada filter, urutkan berdasarkan tanggal terbaru
+        $absensis = Absensi::orderBy('created_at', 'desc')->paginate(10);
     }
 
     return view('absensi', compact('absensis', 'siswas', 'dates'));
 }
+
+
 
     /**
      * Store a newly created resource in storage.
