@@ -16,8 +16,13 @@ class LaporanController extends Controller
 
         // Mengambil data absensi dengan pagination
         $absensis = Absensi::whereBetween('created_at', [$dateStart, $dateEnd])
-                            ->with('siswa')
-                            ->paginate(10); // Tentukan jumlah per halaman sesuai kebutuhan
+                    ->with('siswa')
+                    ->orderBy('created_at', 'asc')
+                    ->paginate(10)
+                    ->appends([
+                        'date_start' => $dateStart,
+                        'date_end' => $dateEnd
+                    ]);
 
         return view('laporan', [
             'absensis' => $absensis,
@@ -35,6 +40,7 @@ class LaporanController extends Controller
         // Ambil data absensi dalam rentang tanggal
         $absensis = Absensi::whereBetween('created_at', [$dateStart, $dateEnd])
                             ->with('siswa')
+                            ->orderBy('created_at', 'asc')
                             ->get();
 
         // Buat PDF dengan data absensi menggunakan view laporan_pdf

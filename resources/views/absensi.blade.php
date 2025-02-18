@@ -212,7 +212,7 @@
                     Tambah
                     Data Absensi</button>
                     <form action="/absensi" method="GET" class="d-flex gap-2">
-                        <input type="text" name="search" class="form-control" placeholder="Cari..."
+                        <input type="text" name="search" class="form-control" placeholder="Cari Nama Siswa"
                             value="{{ request()->get('search') }}">
                         <div>
                             <label for="date_start" class="form-label"></label>
@@ -266,11 +266,10 @@
                                             <i class="bi bi-pencil-square"></i>
                                         </button>
                                         <!-- Delete Button -->
-                                        <form action="{{ route('absensi.destroy', $absensi->id) }}" method="POST"
-                                            onsubmit="return confirm('Yakin ingin menghapus data ini?')">
+                                        <form action="{{ route('absensi.destroy', $absensi->id) }}" method="POST" id="delete-form-{{ $absensi->id }}">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" class="btn btn-sm btn-danger">
+                                            <button type="button" class="btn btn-sm btn-danger" onclick="confirmDelete({{ $absensi->id }})">
                                                 <i class="bi bi-trash"></i>
                                             </button>
                                         </form>
@@ -384,7 +383,7 @@
                             <select class="form-select" id="status" name="status" required>
                                 <option value="i">Izin</option>
                                 <option value="s">Sakit</option>
-                                <option value="h">Alfa</option>
+                                <option value="a">Alfa</option>
                             </select>
                         </div>
                         <div class="mb-3">
@@ -432,7 +431,7 @@
                                     </option>
                                     <option value="s" {{ $absensi->status == 's' ? 'selected' : '' }}>Sakit
                                     </option>
-                                    <option value="h" {{ $absensi->status == 'h' ? 'selected' : '' }}>Alfa
+                                    <option value="a" {{ $absensi->status == 'a' ? 'selected' : '' }}>Alfa
                                     </option>
                                 </select>
                             </div>
@@ -456,6 +455,7 @@
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         // Script untuk mengupdate koordinat ketika memilih NISN
         function updateKoordinat() {
@@ -463,6 +463,21 @@
             const koordinatInput = document.getElementById('koordinat');
             const selectedOption = nisnSelect.options[nisnSelect.selectedIndex];
             koordinatInput.value = selectedOption.getAttribute('data-koordinat');
+        }
+        function confirmDelete(id) {
+            Swal.fire({
+                title: 'Apakah Anda yakin?',
+                text: 'Data yang dihapus tidak dapat dikembalikan!',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Ya, hapus!',
+                cancelButtonText: 'Batal',
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Jika pengguna mengonfirmasi, submit form untuk menghapus data
+                    document.getElementById('delete-form-' + id).submit();
+                }
+            });
         }
     </script>
 </body>

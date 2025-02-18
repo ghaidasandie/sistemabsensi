@@ -15,7 +15,7 @@ Route::get('/login', function () {
     return view('login');
 })->middleware('guest')->name('login');
 
-// Route untuk proses login dengan validasi
+
 // Route untuk halaman login
 Route::get('/login', function () {
     return view('login');
@@ -36,16 +36,16 @@ Route::post('/login', function (Request $request) {
 // Middleware auth untuk rute yang hanya bisa diakses oleh user yang login
 Route::middleware('auth')->group(function () {
 
-// Route untuk logout
-Route::post('/logout', function () {
-    Auth::logout();
-    return redirect()->route('login');  // Arahkan ke halaman login setelah logout
-})->middleware('auth')->name('logout');
+    // Route untuk logout
+    Route::post('/logout', function () {
+        Auth::logout();
+        return redirect()->route('login');  // Arahkan ke halaman login setelah logout
+    })->middleware('auth')->name('logout');
 
-// Rute utama jika belum login (akan mengarah ke login)
-Route::get('/', function () {
-    return redirect()->route('login'); // Jika belum login, arahkan ke login
-});
+    // Rute utama jika belum login (akan mengarah ke login)
+    Route::get('/', function () {
+        return redirect()->route('login'); // Jika belum login, arahkan ke login
+    });
 
     // Dashboard
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
@@ -56,6 +56,11 @@ Route::get('/', function () {
 
     // Manajemen Absensi
     Route::resource('absensi', AbsensiController::class);
+    // Route untuk konfirmasi penghapusan
+    Route::get('/absensi/confirm-delete/{id}', [AbsensiController::class, 'confirmDelete'])->name('absensi.confirmDelete');
+    // Route untuk menghapus data setelah konfirmasi
+    Route::delete('/absensi/{id}', [AbsensiController::class, 'destroy'])->name('absensi.destroy');
+
 
     // Status
     Route::get('/status', [StatusController::class, 'index'])->name('status.index');
@@ -77,5 +82,4 @@ Route::get('/', function () {
         $token = Auth::user()->createToken('absensi')->plainTextToken;
         return view('home', ['token' => $token]);
     })->name('home');
-
 });

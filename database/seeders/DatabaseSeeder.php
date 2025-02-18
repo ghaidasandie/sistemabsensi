@@ -42,51 +42,41 @@ class DatabaseSeeder extends Seeder
             'selesai' => null,
         ]);
 
-        // Buat Absensi untuk Rizqi Suhada (12 hadir, 1 izin, 1 sakit)
+        // Ambil data siswa
         $siswaRizqi = Siswa::where('nisn', '24012020')->first();
+        $siswas = Siswa::where('nisn', '!=', '24012020')->get();
 
-        // Menambahkan absensi hadir (12 kali) dengan koordinat dan timestamp
-        for ($i = 0; $i < 12; $i++) {
+        // Tanggal awal untuk absensi 30 hari terakhir
+        $startDate = Carbon::now()->subDays(30);
+
+        // Absensi untuk Rizqi Suhada (12 hari berturut-turut hadir, lalu izin & sakit realistis)
+        for ($i = 0; $i < 14; $i++) {
+            $tanggal = $startDate->copy()->addDays($i); // Tanggal urut
+            $status = $i < 10 ? 'h' : ($i == 10 ? 'i' : 's'); // 10 hari hadir, lalu izin, lalu sakit
+
             Absensi::create([
                 'nisn' => $siswaRizqi->nisn,
-                'status' => 'h',  // h = Hadir
-                'koordinat' => $siswaRizqi->koordinat,  // Menambahkan koordinat
-                'created_at' => Carbon::now()->subDays($i),  // Menambahkan timestamp untuk tanggal absensi
-                'updated_at' => Carbon::now()->subDays($i),  // Timestamp update
+                'status' => $status,
+                'koordinat' => $siswaRizqi->koordinat,
+                'created_at' => $tanggal,
+                'updated_at' => $tanggal,
             ]);
         }
 
-        // Menambahkan absensi izin (1 kali) dengan koordinat dan timestamp
-        Absensi::create([
-            'nisn' => $siswaRizqi->nisn,
-            'status' => 'i',  // i = Izin
-            'koordinat' => $siswaRizqi->koordinat,  // Menambahkan koordinat
-            'created_at' => Carbon::now()->subDays(9),  // 1 hari sebelumnya
-            'updated_at' => Carbon::now()->subDays(9),  // Timestamp update
-        ]);
-
-        // Menambahkan absensi sakit (1 kali) dengan koordinat dan timestamp
-        Absensi::create([
-            'nisn' => $siswaRizqi->nisn,
-            'status' => 's',  // s = Sakit
-            'koordinat' => $siswaRizqi->koordinat,  // Menambahkan koordinat
-            'created_at' => Carbon::now()->subDays(10),  // 2 hari sebelumnya
-            'updated_at' => Carbon::now()->subDays(10),  // Timestamp update
-        ]);
-
-        // Buat Absensi dengan tanggal dan status acak untuk 9 Siswa Lainnya
-        $siswas = Siswa::where('nisn', '!=', '24012020')->get();
-
+        // Buat Absensi untuk Siswa Lainnya dengan tanggal yang terurut
         foreach ($siswas as $siswa) {
-            // Buat 10 absensi acak untuk siswa lainnya
+            $tanggalMulai = $startDate->copy();
+
             for ($i = 0; $i < 14; $i++) {
-                $status = $this->randomAbsensiStatus();  // Ambil status acak
+                $tanggal = $tanggalMulai->copy()->addDays($i); // Pastikan tanggalnya urut
+                $status = $this->randomAbsensiStatus();
+
                 Absensi::create([
                     'nisn' => $siswa->nisn,
-                    'status' => $status,  // Status acak
-                    'koordinat' => $siswa->koordinat,  // Menambahkan koordinat
-                    'created_at' => Carbon::now()->subDays(rand(1, 30)),  // Tanggal acak antara 1 sampai 30 hari lalu
-                    'updated_at' => Carbon::now()->subDays(rand(1, 30)),  // Timestamp update acak
+                    'status' => $status,
+                    'koordinat' => $siswa->koordinat,
+                    'created_at' => $tanggal,
+                    'updated_at' => $tanggal,
                 ]);
             }
         }
@@ -99,8 +89,7 @@ class DatabaseSeeder extends Seeder
      */
     private function randomAbsensiStatus(): string
     {
-        // Ambil status absensi acak
-        $statuses = ['h', 'i', 's', 'a'];  // h = Hadir, i = Izin, s = Sakit, a = Absen
+        $statuses = ['h', 'i', 's', 'a'];  // Hadir, Izin, Sakit, Absen
         return $statuses[array_rand($statuses)];
     }
 }
